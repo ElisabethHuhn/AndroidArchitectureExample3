@@ -11,3 +11,12 @@ This project is an example of State of the Art Android Architecture circa 2023. 
 * Repository to separate business logic from Data Source
 * RetroFit2 for REST calls
 * ROOM for local DB Persistence
+
+# Punch List of things to do and bugs to fix
+* Finish UI compose functions
+  * asssure navigation works
+* Figure out testing using the VM functions to cheat Repository
+* Implement Repository
+  * pass calls from VM to Repository
+* Get Retrofit working
+* Get ROOM working
