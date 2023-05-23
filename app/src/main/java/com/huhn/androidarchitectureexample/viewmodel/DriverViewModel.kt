@@ -38,9 +38,11 @@ class DriverViewModel : ViewModel() {
     /*
      * Return driver corresponding to DriverID
      */
-    fun getDriver(driverId: String): Driver{
-        // for now cheat
-        return Driver(id ="0", name = "Driver Zero")
+    fun getDriver(driverId: String): Driver?{
+        getDrivers().forEach { driver: Driver ->
+            if (driver.id == driverId) return driver
+        }
+        return null
     }
     fun getRouteFromDriver(driverId: String) : Route {
         return Route(id= 0, name = "Route Zero", type = "I")

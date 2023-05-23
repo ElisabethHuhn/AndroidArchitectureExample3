@@ -58,7 +58,7 @@ object RouteDestination : ScreenDestination {
     override val title: Int
         get() = R.string.route_title
     const val driverIdArg = "driverId"
-    val routeWithArg: String = "$route/{$driverIdArg"
+    val routeWithArg: String = "$route/{$driverIdArg}"
     val arguments = listOf(navArgument(driverIdArg) {type = NavType.StringType})
     fun getNavigationDriverToRoute(driverId: String) = "$route/$driverId"
 }
@@ -82,7 +82,10 @@ fun MainNavGraph(
             DriverScreen(
                 screenTitle = DriverDestination.title,
                 onDriverSelect = {
-                    navController.navigate(RouteDestination.getNavigationDriverToRoute(it))
+                    val toDes = RouteDestination.getNavigationDriverToRoute(it)
+                    navController.navigate(
+                        toDes
+                    )
                 },
                 viewModel = driverViewModel,
             )
@@ -95,9 +98,12 @@ fun MainNavGraph(
             //pass navigation as parameter
             RouteScreen(
                 screenTitle = RouteDestination.title,
-                driverId = backStackEntry.arguments?.getString(RouteDestination.driverIdArg) ?: "",
+                driverId = backStackEntry.arguments?.getString(
+                    RouteDestination.driverIdArg
+                ) ?: "",
                 onBack = {
-                         navController.navigate(DriverDestination.route)
+                    val toDest = DriverDestination.route
+                     navController.navigate(toDest)
                 },
                 viewModel = driverViewModel,
             )
@@ -128,63 +134,61 @@ fun DriverScreen(
                     }
                 },
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    /*TODO Sort alphabetically by last name*/
+                    val drivers = viewModel.sortDrivers(viewModel.getDrivers())
+                    /* TODO redisplay DriverScreen */
+                },
+                shape = RectangleShape
+            ) {
+                Icon(Icons.Filled.Add, contentDescription = "Sort")
+            }
         }
+
     ) { it
 
-        var drivers: List<Driver> = viewModel.getDrivers()
+        val drivers: List<Driver> = viewModel.getDrivers()
         val counterState = remember { mutableStateOf(0) }
 
-        FloatingActionButton(
-            onClick = {
-                /*TODO Sort alphabetically by last name*/
-                drivers = viewModel.sortDrivers(drivers)
-                counterState.value = counterState.value + 1 //force recompose
-                      },
-            shape = RectangleShape
-        ) {
-            Icon(Icons.Filled.Add, contentDescription = "Sort")
-        }
-        Spacer(modifier = Modifier.height(15.0.dp))
+        Spacer(modifier = Modifier.height(95.0.dp))
         LazyColumn(
             modifier = Modifier.fillMaxWidth(1f),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
+                Spacer(modifier = Modifier.height(95.0.dp))
                 Text(
                     text = stringResource(R.string.driver_list),
-                    fontSize = 30.sp,
+                    fontSize = 20.sp,
                     modifier = Modifier
                 )
             }
 
             items(drivers.size) { position ->
                 val driver = drivers[position]
-
-                DisplayDriver(driver = driver, onDriverSelect = onDriverSelect)
+                Row (
+                    modifier = Modifier,
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        modifier = Modifier.clickable { onDriverSelect(driver.id)  },
+                        text = driver.id
+                    )
+                    Text(
+                        modifier = Modifier.clickable { onDriverSelect(driver.id)  },
+                        text = driver.name
+                    )
+                }
             }
         }
     }
 }
 
-
-@Composable
-fun DisplayDriver(driver: Driver, onDriverSelect: (driverId: String) -> Unit){
-    Row (
-        modifier = Modifier,
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            modifier = Modifier.clickable { onDriverSelect(driver.id)  },
-            text = driver.id
-        )
-        Text(
-            modifier = Modifier.clickable { onDriverSelect(driver.id)  },
-            text = driver.name
-        )
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -210,19 +214,18 @@ fun RouteScreen(
         }
     ) { it
 
-        var drivers: List<Driver> = viewModel.getDrivers()
         val counterState = remember { mutableStateOf(0) }
-
 
         Column(
             modifier = Modifier.fillMaxWidth(1f),
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.height(95.0.dp))
             Text(
-                text = stringResource(R.string.driver_list),
-                fontSize = 30.sp,
-                modifier = Modifier
+                modifier = Modifier,
+                text = stringResource(R.string.route_picked),
+                fontSize = 20.sp,
             )
 
             val driver = viewModel.getDriver(driverId)
@@ -231,14 +234,14 @@ fun RouteScreen(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = driver.id)
-                Text(text = driver.name
-                ) }
+                //TODO what to do if driver is null
+                Text(text = driver?.id ?: "0")
+                Text(text = driver?.name ?: "Driver Zero")
+            }
             Button(
                 onClick = {
-                /*TODO*/
                     //navigate to Driver Screen
-                    onBack
+                    onBack.invoke()
                 })
             {
                 Text(text = stringResource(id = R.string.route_button))
