@@ -33,7 +33,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.huhn.androidarchitectureexample.R
-import com.huhn.androidarchitectureexample.repository.network.networkModel.Driver
 import com.huhn.androidarchitectureexample.viewmodel.DriverViewModel
 
 /*
@@ -121,6 +120,9 @@ fun DriverScreen(
     viewModel: DriverViewModel
 
 ) {
+    val counterState = remember { mutableStateOf(0) }
+    val drivers = remember { mutableStateOf(viewModel.getDrivers()) }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -139,7 +141,12 @@ fun DriverScreen(
             FloatingActionButton(
                 onClick = {
                     /*TODO Sort alphabetically by last name*/
-                    val drivers = viewModel.sortDrivers(viewModel.getDrivers())
+                    var sortingParm = true
+                    if (viewModel.isSorted) sortingParm = false
+                    viewModel.isSorted = sortingParm
+                    drivers.value = viewModel.getDrivers()
+
+                    counterState.value = counterState.value + 1
                     /* TODO redisplay DriverScreen */
                 },
                 shape = RectangleShape
@@ -150,8 +157,6 @@ fun DriverScreen(
 
     ) { it
 
-        val drivers: List<Driver> = viewModel.getDrivers()
-        val counterState = remember { mutableStateOf(0) }
 
         Spacer(modifier = Modifier.height(95.0.dp))
         LazyColumn(
@@ -168,8 +173,8 @@ fun DriverScreen(
                 )
             }
 
-            items(drivers.size) { position ->
-                val driver = drivers[position]
+            items(drivers.value.size) { position ->
+                val driver = drivers.value[position]
                 Row (
                     modifier = Modifier,
                     horizontalArrangement = Arrangement.SpaceEvenly,
@@ -213,8 +218,6 @@ fun RouteScreen(
             )
         }
     ) { it
-
-        val counterState = remember { mutableStateOf(0) }
 
         Column(
             modifier = Modifier.fillMaxWidth(1f),
