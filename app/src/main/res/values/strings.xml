@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">AndroidArchitectureExample</string>
+    <string name="driver_title">State of the Art \n Driver Screen</string>
+    <string name="route_title">State of the Art \n Route Screen</string>
+    <string name="driver_list">List of Drivers:</string>
+    <string name="route_button">Return to Driver Screen</string>
+</resources>
