@@ -15,7 +15,7 @@ This project is an example of State of the Art Android Architecture circa 2023. 
 
 # Punch List of things to do and bugs to fix
 * Finish UI compose functions
-  * assure navigation works
+  * Need to fix the VM functions that provide the data, but Compose itself seems to work
 * Once Repository is in place, fix VM methods
 * Figure out testing (using the VM functions to cheat Repository)
 * Implement Repository
