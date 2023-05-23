@@ -3,6 +3,7 @@
 # Introduction
 This project is an example of State of the Art Android Architecture circa 2023. It uses:
 * Compose for building UI
+  * Also uses Compose NavGraph navigation
 * MVVM to
   * persist UI local cache across orientation changes
   * business logic to calculate values for UI display
