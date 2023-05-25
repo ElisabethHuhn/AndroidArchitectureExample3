@@ -231,7 +231,7 @@ fun RouteScreen(
                 fontSize = 20.sp,
             )
 
-            val driver = viewModel.getDriver(driverId)
+            val driver = viewModel.findDriver(driverId)
             Row (
                 modifier = Modifier,
                 horizontalArrangement = Arrangement.SpaceEvenly,

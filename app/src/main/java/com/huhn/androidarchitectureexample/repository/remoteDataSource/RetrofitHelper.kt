@@ -1,4 +1,4 @@
-package com.huhn.androidarchitectureexample.repository.network
+package com.huhn.androidarchitectureexample.repository.remoteDataSource
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

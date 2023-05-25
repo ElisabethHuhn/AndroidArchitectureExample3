@@ -1,33 +1,19 @@
-package com.huhn.androidarchitectureexample
+package com.huhn.androidarchitectureexample.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavGraph
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.huhn.androidarchitectureexample.ui.DriverDestination
-import com.huhn.androidarchitectureexample.ui.DriverScreen
-import com.huhn.androidarchitectureexample.ui.MainNavGraph
-import com.huhn.androidarchitectureexample.ui.RouteDestination
-import com.huhn.androidarchitectureexample.ui.RouteScreen
 import com.huhn.androidarchitectureexample.ui.theme.AndroidArchitectureExampleTheme
 import com.huhn.androidarchitectureexample.viewmodel.DriverViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
-    private val driveViewModel: DriverViewModel by viewModels()
+    private val driveViewModel: DriverViewModel by viewModel()
 
     @ExperimentalMaterial3Api
     override fun onCreate(savedInstanceState: Bundle?) {

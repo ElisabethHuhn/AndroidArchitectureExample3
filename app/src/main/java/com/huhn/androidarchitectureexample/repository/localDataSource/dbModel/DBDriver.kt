@@ -1,6 +1,5 @@
-package com.huhn.androidarchitectureexample.repository.database.dbModel
+package com.huhn.androidarchitectureexample.repository.localDataSource.dbModel
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
