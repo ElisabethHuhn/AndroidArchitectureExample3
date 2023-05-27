@@ -120,8 +120,10 @@ fun DriverScreen(
     viewModel: DriverViewModel
 
 ) {
+    val localDrivers = viewModel.getDrivers()
     val counterState = remember { mutableStateOf(0) }
-    val drivers = remember { mutableStateOf(viewModel.getDrivers()) }
+    //TODO change this to observeAsState
+    val drivers = viewModel.drivers.obs
 
     Scaffold(
         topBar = {
@@ -171,6 +173,13 @@ fun DriverScreen(
                     fontSize = 20.sp,
                     modifier = Modifier
                 )
+                Spacer(modifier = Modifier.height(95.0.dp))
+                Text(
+                    text = stringResource(R.string.is_sorted, viewModel.isSorted),
+                    fontSize = 20.sp,
+                    modifier = Modifier
+                )
+
             }
 
             items(drivers.value.size) { position ->

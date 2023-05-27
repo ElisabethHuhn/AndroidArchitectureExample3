@@ -5,4 +5,5 @@
     <string name="driver_list">List of Drivers:</string>
     <string name="route_picked">You Selected:</string>
     <string name="route_button">Return to Driver Screen</string>
+    <string name="is_sorted">List isSorted = %1b</string>
 </resources>
