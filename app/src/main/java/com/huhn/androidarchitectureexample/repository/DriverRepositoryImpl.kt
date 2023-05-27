@@ -3,6 +3,7 @@ package com.huhn.androidarchitectureexample.repository
 import com.huhn.androidarchitectureexample.repository.localDataSource.AppDatabase
 import com.huhn.androidarchitectureexample.repository.localDataSource.DBDriverDao
 import com.huhn.androidarchitectureexample.repository.remoteDataSource.DriverApiService
+import com.huhn.androidarchitectureexample.repository.remoteDataSource.RetrofitHelper
 import com.huhn.androidarchitectureexample.repository.remoteDataSource.networkModel.DriverResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,26 +37,7 @@ class DriverRepositoryImpl() : DriverRepository {
          * Use RetrofitHelper to create the instance of Retrofit
          * Then use this instance to create an instance of the API
          */
-
-//        driverApi = RetrofitHelper.getInstance().create(DriverApiService::class.java)
-
-        /*
-         * Rather than having RetrofitHelper, just instantiate Retrofit directly
-         */
-        val baseUrl = "https://d49c3a78-a4f2-437d-bf72-569334dea17c.mock.pstmn.io"
-
-        //Instantiate Retrofit
-        val retrofitInstance: Retrofit =
-            Retrofit.Builder()
-                //define where to get the Json
-                .baseUrl(baseUrl)
-                // convert JSON object to Kotlin object
-                .addConverterFactory(GsonConverterFactory.create())
-                //build the Retrofit instance
-                .build()
-
-        driverApi = retrofitInstance.create(DriverApiService::class.java)
-
+        driverApi = RetrofitHelper.getInstance().create(DriverApiService::class.java)
     }
 
     override fun getDrivers(driverCallbackHandler: Callback<DriverResponse>) {
