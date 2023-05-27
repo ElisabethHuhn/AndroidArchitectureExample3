@@ -3,7 +3,10 @@
     <string name="driver_title">State of the Art \n Driver Screen</string>
     <string name="route_title">State of the Art \n Route Screen</string>
     <string name="driver_list">List of Drivers:</string>
+    <string name="route_list">List of Routes:</string>
+
     <string name="route_picked">You Selected:</string>
     <string name="route_button">Return to Driver Screen</string>
     <string name="is_sorted">List isSorted = %1b</string>
+    <string name="nav_instructions">Select any driver</string>
 </resources>

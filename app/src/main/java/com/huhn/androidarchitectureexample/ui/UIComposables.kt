@@ -3,28 +3,28 @@ package com.huhn.androidarchitectureexample.ui
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavType
@@ -33,7 +33,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.huhn.androidarchitectureexample.R
-import com.huhn.androidarchitectureexample.viewmodel.DriverViewModel
+import com.huhn.androidarchitectureexample.viewmodel.DriverViewModelImpl
 
 /*
  * A ScreenDestination keeps together all the information needed
@@ -68,7 +68,7 @@ object RouteDestination : ScreenDestination {
 @ExperimentalMaterial3Api
 @Composable
 fun MainNavGraph(
-    driverViewModel: DriverViewModel,
+    driverViewModel: DriverViewModelImpl,
 ){
     val navController = rememberNavController()
 
@@ -117,13 +117,17 @@ fun MainNavGraph(
 fun DriverScreen(
     screenTitle : Int,
     onDriverSelect: (driverId: String) -> Unit,
-    viewModel: DriverViewModel
+    viewModel: DriverViewModelImpl
 
 ) {
-    val localDrivers = viewModel.getDrivers()
-    val counterState = remember { mutableStateOf(0) }
-    //TODO change this to observeAsState
-    val drivers = viewModel.drivers.obs
+    val counterState = remember { mutableIntStateOf(0) }
+    val drivers = viewModel._drivers.observeAsState()
+
+    //actually make the API call
+    viewModel.setDrivers()
+//    LaunchedEffect(key1 = Unit) {
+//        viewModel.getDrivers()
+//    }
 
     Scaffold(
         topBar = {
@@ -141,20 +145,19 @@ fun DriverScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
+                content = { Text(text = "Sort")},
                 onClick = {
                     /*TODO Sort alphabetically by last name*/
                     var sortingParm = true
                     if (viewModel.isSorted) sortingParm = false
                     viewModel.isSorted = sortingParm
-                    drivers.value = viewModel.getDrivers()
+                    viewModel.setDrivers()
 
-                    counterState.value = counterState.value + 1
                     /* TODO redisplay DriverScreen */
+                    counterState.value = counterState.value + 1
                 },
-                shape = RectangleShape
-            ) {
-                Icon(Icons.Filled.Add, contentDescription = "Sort")
-            }
+                shape = RectangleShape,
+            )
         }
 
     ) { it
@@ -168,37 +171,47 @@ fun DriverScreen(
         ) {
             item {
                 Spacer(modifier = Modifier.height(95.0.dp))
+                UnderlinedText(textString = stringResource(id = R.string.driver_list))
+            }
+
+            drivers.value?.size?.let { numberOfDrivers ->
+                items(numberOfDrivers) { position ->
+                    val driver = drivers.value!![position]
+                    Row (
+                        modifier = Modifier,
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            modifier = Modifier.clickable { onDriverSelect(driver.id)  },
+                            text = driver.id
+                        )
+                        Text(
+                            modifier = Modifier.clickable { onDriverSelect(driver.id)  },
+                            text = driver.name
+                        )
+                    }
+                }
+            }
+            item {
+                Spacer(modifier = Modifier.height(15.0.dp))
                 Text(
-                    text = stringResource(R.string.driver_list),
+                    text = stringResource(R.string.nav_instructions),
                     fontSize = 20.sp,
-                    modifier = Modifier
+                    modifier = Modifier,
+                    fontStyle = FontStyle.Italic
                 )
-                Spacer(modifier = Modifier.height(95.0.dp))
+            }
+            item {
+                Spacer(modifier = Modifier.height(15.0.dp))
                 Text(
                     text = stringResource(R.string.is_sorted, viewModel.isSorted),
                     fontSize = 20.sp,
-                    modifier = Modifier
-                )
-
-            }
-
-            items(drivers.value.size) { position ->
-                val driver = drivers.value[position]
-                Row (
                     modifier = Modifier,
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        modifier = Modifier.clickable { onDriverSelect(driver.id)  },
-                        text = driver.id
-                    )
-                    Text(
-                        modifier = Modifier.clickable { onDriverSelect(driver.id)  },
-                        text = driver.name
-                    )
-                }
+                    fontWeight = FontWeight.Bold
+                )
             }
+
         }
     }
 }
@@ -210,7 +223,7 @@ fun RouteScreen(
     screenTitle: Int,
     driverId: String,
     onBack: () -> Unit,
-    viewModel: DriverViewModel
+    viewModel: DriverViewModelImpl
 ) {
     Scaffold(
         topBar = {
@@ -227,38 +240,76 @@ fun RouteScreen(
             )
         }
     ) { it
+        val routes = viewModel._routes.observeAsState()
 
-        Column(
+        LazyColumn(
             modifier = Modifier.fillMaxWidth(1f),
-            verticalArrangement = Arrangement.Bottom,
+            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(95.0.dp))
-            Text(
-                modifier = Modifier,
-                text = stringResource(R.string.route_picked),
-                fontSize = 20.sp,
-            )
-
-            val driver = viewModel.findDriver(driverId)
-            Row (
-                modifier = Modifier,
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                //TODO what to do if driver is null
-                Text(text = driver?.id ?: "0")
-                Text(text = driver?.name ?: "Driver Zero")
+            item {
+                Spacer(modifier = Modifier.height(95.0.dp))
+                Text(
+                    modifier = Modifier,
+                    text = stringResource(R.string.route_picked),
+                    fontSize = 20.sp,
+                )
             }
-            Button(
-                onClick = {
-                    //navigate to Driver Screen
-                    onBack.invoke()
-                })
-            {
-                Text(text = stringResource(id = R.string.route_button))
+            item {
+                val driver = viewModel.findDriver(driverId)
+                Spacer(modifier = Modifier.height(5.0.dp))
+                Row (
+                    modifier = Modifier,
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    //Note defaults if driver is null
+                    Text(text = driver?.id ?: "0")
+                    Text(text = driver?.name ?: "Driver Zero")
+                }
             }
+            item {
+                Spacer(modifier = Modifier.height(5.0.dp))
+                UnderlinedText(textString = stringResource(R.string.route_list))
 
+                Spacer(modifier = Modifier.height(15.0.dp))
+            }
+            routes.value?.size?.let { numberOfRoutes ->
+                items(numberOfRoutes) { position ->
+                    val route = routes.value!![position]
+                    Row (
+                        modifier = Modifier,
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = route.id.toString()
+                        )
+                        Text(
+                            text = route.name
+                        )
+                    }
+                }
+            }
+            item {
+                Button(
+                    onClick = {
+                        //navigate to Driver Screen
+                        onBack.invoke()
+                    })
+                {
+                    Text(text = stringResource(id = R.string.route_button))
+                }
+            }
         }
     }
+}
+
+@Composable
+fun UnderlinedText(textString: String) {
+    Text(
+        text = textString,
+        textDecoration = TextDecoration.Underline,
+        fontSize = 20.sp,
+    )
 }

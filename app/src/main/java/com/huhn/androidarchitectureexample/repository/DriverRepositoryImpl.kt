@@ -32,6 +32,16 @@ class DriverRepositoryImpl() : DriverRepository {
     private val driverApi: DriverApiService
 
     init {
+        /*
+         * Use RetrofitHelper to create the instance of Retrofit
+         * Then use this instance to create an instance of the API
+         */
+
+//        driverApi = RetrofitHelper.getInstance().create(DriverApiService::class.java)
+
+        /*
+         * Rather than having RetrofitHelper, just instantiate Retrofit directly
+         */
         val baseUrl = "https://d49c3a78-a4f2-437d-bf72-569334dea17c.mock.pstmn.io"
 
         //Instantiate Retrofit
@@ -51,11 +61,12 @@ class DriverRepositoryImpl() : DriverRepository {
     override fun getDrivers(driverCallbackHandler: Callback<DriverResponse>) {
         //TODO this should hide whether the driver data is coming from remote or local
         //for now, remote data only, and the callback updates the ViewModel LiveData
-        //The Compose UI will recompose when the viewmodel.drivers list changes
-        //TODO investigate setting up a Flow in the callback, and updating the viewmodel that way
+        //The Compose UI will recompose when the view-model.drivers list changes
+        //TODO investigate setting up a Flow in the callback, and updating the view-model that way
         val scope = CoroutineScope(Dispatchers.IO)
         val job = scope.launch {
             val driversAndRoutesCall = driverApi.fetchDriverResponseCall()
+            //Initiate the remote call, with the passed callback to handle the remote response
             driversAndRoutesCall.enqueue(driverCallbackHandler)
         }
     }

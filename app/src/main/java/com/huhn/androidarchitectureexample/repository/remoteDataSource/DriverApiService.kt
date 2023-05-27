@@ -9,7 +9,7 @@ import retrofit2.http.GET
 // TODO: fix the get URI
 interface DriverApiService {
     @GET("/data")
-    suspend fun fetchDriverResponseCall() : Call<DriverResponse>
+    fun fetchDriverResponseCall() : Call<DriverResponse>
 }
 //
 //interface DriverApiHelper {

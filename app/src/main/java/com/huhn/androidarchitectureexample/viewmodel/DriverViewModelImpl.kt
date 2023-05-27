@@ -1,6 +1,7 @@
 package com.huhn.androidarchitectureexample.viewmodel
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.huhn.androidarchitectureexample.repository.DriverRepositoryImpl
@@ -11,12 +12,24 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class DriverViewModel(private val repo : DriverRepositoryImpl) : ViewModel()
+// TODO: Figure out how to do this using Koin
+//interface DriverViewModel {
+//    var drivers: MutableLiveData<List<Driver>>
+//    var routes: MutableLiveData<List<Route>>
+//
+//    fun getDrivers()
+//}
+
+class DriverViewModelImpl(private val repo : DriverRepositoryImpl) : ViewModel()
 {
     var isSorted = false
-    var drivers = MutableLiveData<List<Driver>>()
-    var routes = MutableLiveData<List<Route>>()
+    var _drivers = MutableLiveData<List<Driver>>()
+    val drivers : LiveData<List<Driver>>
+        get() = _drivers
 
+    var _routes = MutableLiveData<List<Route>>()
+    val routes : MutableLiveData<List<Route>>
+        get() = _routes
 
     fun getDrivers()  {
         repo.getDrivers(driverCallbackHandler)
@@ -26,7 +39,7 @@ class DriverViewModel(private val repo : DriverRepositoryImpl) : ViewModel()
         // TODO: return a specific route based on business rules
         //for now just punt
 //        return _drivers.firstOrNull { it.id == driverId }
-        drivers.value?.forEach { driver: Driver ->
+        _drivers.value?.forEach { driver: Driver ->
             if (driver.id == driverId) return driver
         }
         return null
@@ -38,7 +51,7 @@ class DriverViewModel(private val repo : DriverRepositoryImpl) : ViewModel()
         return Route(id= 0, name = "Route Zero", type = "I")
     }
 
-    //Create the callback lambda function that will parse the response and
+    //Create the callback object that will parse the response and
     // actually fill the drivers and routes variables
     //Define the code to execute upon request return
     val driverCallbackHandler = object : Callback<DriverResponse> {
@@ -69,8 +82,8 @@ class DriverViewModel(private val repo : DriverRepositoryImpl) : ViewModel()
 
                 when (responseCode) {
                     200 -> {
-                        drivers.value = response.body()?.drivers ?: listOf()
-                        routes.value = response.body()?.routes ?: listOf()
+                        _drivers.value = response.body()?.drivers ?: listOf()
+                        _routes.value = response.body()?.routes ?: listOf()
                     }
                     else -> {
                         // TODO: inform the user about the error
@@ -83,30 +96,37 @@ class DriverViewModel(private val repo : DriverRepositoryImpl) : ViewModel()
         }
     }
 
-
-    fun getUnsortedDrivers(): List<Driver> {
-        return drivers.value ?: listOf()
+    fun setDrivers() {
+        if (isSorted) setSortedDrivers()
+        else setUnsortedDrivers()
     }
 
-    fun getSortedDrivers() : List<Driver> {
+    fun setUnsortedDrivers() {
+        //just get remote drivers again
+        getDrivers()
+    }
+
+    fun setSortedDrivers()  {
         //TODO implement a sort by last name
         //for now, cheat
-        val unsortedDrivers = drivers.value
+        val unsortedDrivers = _drivers.value
 
-        if (unsortedDrivers == null) return listOf()
-        return listOf(
-            unsortedDrivers[10],
-            unsortedDrivers[9],
-            unsortedDrivers[8],
-            unsortedDrivers[7],
-            unsortedDrivers[6],
-            unsortedDrivers[5],
-            unsortedDrivers[4],
-            unsortedDrivers[3],
-            unsortedDrivers[2],
-            unsortedDrivers[1],
-            unsortedDrivers[0],
-        )
+        _drivers.value = if (unsortedDrivers == null) {
+            listOf()
+        }
+        else {
+            listOf(
+                unsortedDrivers[9],
+                unsortedDrivers[8],
+                unsortedDrivers[7],
+                unsortedDrivers[6],
+                unsortedDrivers[5],
+                unsortedDrivers[4],
+                unsortedDrivers[3],
+                unsortedDrivers[2],
+                unsortedDrivers[1],
+                unsortedDrivers[0],
+            )
+        }
     }
-
 }
