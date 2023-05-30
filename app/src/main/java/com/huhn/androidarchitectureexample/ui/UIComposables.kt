@@ -16,7 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -121,7 +121,7 @@ fun DriverScreen(
     viewModel: DriverViewModelImpl
 
 ) {
-    val forceRecomposeState = remember { mutableIntStateOf(value = 0) }
+    val forceRecomposeState = remember { mutableStateOf( ForceRecomposeState.RECOMPOSE_A) }
     val drivers = viewModel._drivers.observeAsState()
 
     //actually make the API call
@@ -152,8 +152,10 @@ fun DriverScreen(
                     viewModel.setDrivers()
 
                     /* TODO redisplay DriverScreen */
-                    if (forceRecomposeState.value == 0) forceRecomposeState.value = 1
-                    else forceRecomposeState.value = 0
+                    if (forceRecomposeState.value == ForceRecomposeState.RECOMPOSE_A)
+                        forceRecomposeState.value = ForceRecomposeState.RECOMPOSE_B
+                    else
+                        forceRecomposeState.value = ForceRecomposeState.RECOMPOSE_A
                 },
                 shape = RectangleShape,
             )
