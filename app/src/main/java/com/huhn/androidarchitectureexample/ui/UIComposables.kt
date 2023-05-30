@@ -15,6 +15,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -152,6 +153,7 @@ fun DriverScreen(
                     viewModel.setDrivers()
 
                     /* TODO redisplay DriverScreen */
+//                    currentComposer.composition.recompose()
                     if (forceRecomposeState.value == ForceRecomposeState.RECOMPOSE_A)
                         forceRecomposeState.value = ForceRecomposeState.RECOMPOSE_B
                     else
