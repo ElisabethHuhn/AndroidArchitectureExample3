@@ -97,7 +97,7 @@ class DriverViewModelImpl(private val repo : DriverRepositoryImpl) : ViewModel()
     }
 
     fun setDrivers() {
-        if (isSorted) setSortedDrivers()
+        if (isSorted) setSortByDriverId()
         else setUnsortedDrivers()
     }
 
@@ -127,6 +127,19 @@ class DriverViewModelImpl(private val repo : DriverRepositoryImpl) : ViewModel()
                 unsortedDrivers[1],
                 unsortedDrivers[0],
             )
+        }
+    }
+
+    fun setSortByDriverId() {
+        //TODO this sorts 18 as lower than 2, so need to fix the sorting
+        // see https://stackoverflow.com/questions/69956811/kotlin-sort-listt-with-t-being-a-class
+        val sortedList = _drivers.value?.sortedBy { driver: Driver -> driver.id } ?: listOf()
+        _drivers.value = sortedList
+    }
+
+    fun printDrivers() {
+        drivers.value?.forEach { driver ->
+            println("DriverID: ${driver.id} is named: ${driver.name} " )
         }
     }
 }

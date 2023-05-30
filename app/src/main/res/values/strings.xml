@@ -7,6 +7,7 @@
 
     <string name="route_picked">You Selected:</string>
     <string name="route_button">Return to Driver Screen</string>
+    <string name="print_button">Print out list of drivers</string>
     <string name="is_sorted">List isSorted = %1b</string>
     <string name="nav_instructions">Select any driver</string>
 </resources>

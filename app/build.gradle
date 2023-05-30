@@ -25,6 +25,24 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            resValue("string", "build_type_res", "RELEASE")
+            buildConfigField("String", "BUILD_TYPE_STRING", "\"RELEASE\"")
+        }
+        debug {
+            resValue("string", "build_type_res", "DEBUG")
+            buildConfigField("String", "BUILD_TYPE_STRING", "\"DEBUG_STRING\"")
+        }
+        builda {
+            minifyEnabled false
+            buildConfigField("String", "BUILD_TYPE_STRING", "\"BUILD A\"")
+            resValue("string", "build_type_res", "BUILD A")
+            signingConfig signingConfigs.debug
+        }
+        buildb {
+            minifyEnabled false
+            buildConfigField("String", "BUILD_TYPE_STRING", "\"BUILD B\"")
+            resValue("string", "build_type_res", "BUILD B")
+            signingConfig signingConfigs.debug
         }
     }
     compileOptions {
@@ -36,6 +54,7 @@ android {
     }
     buildFeatures {
         compose true
+        buildConfig true
     }
     composeOptions {
         kotlinCompilerExtensionVersion '1.4.7'

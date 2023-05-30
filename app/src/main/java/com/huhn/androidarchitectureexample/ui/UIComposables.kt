@@ -32,6 +32,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.huhn.androidarchitectureexample.BuildConfig
 import com.huhn.androidarchitectureexample.R
 import com.huhn.androidarchitectureexample.viewmodel.DriverViewModelImpl
 
@@ -120,14 +121,11 @@ fun DriverScreen(
     viewModel: DriverViewModelImpl
 
 ) {
-    val counterState = remember { mutableIntStateOf(0) }
+    val forceRecomposeState = remember { mutableIntStateOf(value = 0) }
     val drivers = viewModel._drivers.observeAsState()
 
     //actually make the API call
     viewModel.setDrivers()
-//    LaunchedEffect(key1 = Unit) {
-//        viewModel.getDrivers()
-//    }
 
     Scaffold(
         topBar = {
@@ -154,7 +152,8 @@ fun DriverScreen(
                     viewModel.setDrivers()
 
                     /* TODO redisplay DriverScreen */
-                    counterState.value = counterState.value + 1
+                    if (forceRecomposeState.value == 0) forceRecomposeState.value = 1
+                    else forceRecomposeState.value = 0
                 },
                 shape = RectangleShape,
             )
@@ -171,6 +170,15 @@ fun DriverScreen(
         ) {
             item {
                 Spacer(modifier = Modifier.height(95.0.dp))
+                Text(text = BuildConfig.BUILD_TYPE_STRING)
+            }
+            item {
+                Spacer(modifier = Modifier.height(5.0.dp))
+                Text(text = stringResource(id = R.string.build_type_res))
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(15.0.dp))
                 UnderlinedText(textString = stringResource(id = R.string.driver_list))
             }
 
@@ -210,6 +218,16 @@ fun DriverScreen(
                     modifier = Modifier,
                     fontWeight = FontWeight.Bold
                 )
+            }
+            item {
+                Button(
+                    onClick = {
+                        //Print out the list of drivers
+                        viewModel.printDrivers()
+                    })
+                {
+                    Text(text = stringResource(id = R.string.print_button))
+                }
             }
 
         }

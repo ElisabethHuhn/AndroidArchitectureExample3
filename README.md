@@ -21,10 +21,12 @@ This project is an example of State of the Art Android Architecture circa 2023. 
 
 # Architecture Discussion
 
+# Next Steps
+
 # Punch List of things to do and bugs to fix
 * Finish UI compose functions
   * Need to fix the VM functions that provide the data, but Compose itself seems to work
-* Add Room
+* Get Room working
 * When the VM comes up, 
   * When the Repository comes up, Retrofit is called to get the list of drivers and Routes
   * when the response returns, create the DB and fill it
@@ -32,7 +34,3 @@ This project is an example of State of the Art Android Architecture circa 2023. 
     * if it doesn't get any, query retrofit for the remote list
 * Once Repository is in place, fix VM methods
 * Figure out testing (using the VM functions to cheat Repository)
-* Implement Repository
-  * pass calls from VM to Repository
-* Get Retrofit working
-* Get ROOM working
