@@ -18,6 +18,9 @@ interface DBRouteDao {
 //    @Insert
 //    suspend fun insertAllRoutes(vararg DBRoutes: DBRoute)
 //
+//    @Update
+//    suspend fun updateRoute(route: DBRoute)
+//
 //    @Delete
 //    suspend fun deleteRoute(DBRoute: DBRoute)
 }

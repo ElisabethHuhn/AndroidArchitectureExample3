@@ -18,6 +18,9 @@ interface DBDriverDao {
 //    @Insert
 //    suspend fun insertAllDrivers(vararg DBDrivers: DBDriver)
 //
+//    @Update
+//    suspend fun updateDriver(driver: DBDriver)
+//
 //    @Delete
 //    suspend fun deleteDriver(DBDriver: DBDriver)
 }

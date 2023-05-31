@@ -14,16 +14,21 @@ This project is an example of State of the Art Android Architecture circa 2023. 
   * UI state variables governing UI compose
 * Repository to separate business logic from Data Source
   * Examples of both localDataSource and remoteDataSource
-* RetroFit2 for REST calls
-* ROOM for local DB Persistence
+  * localDataSource is ROOM DB
+  * remoteDataSource is RetroFit2
+* Use Flows to move lists back to UI compose (via the ViewModel) from Repository
+* Unit Testing
+
 
 # Requirements
+Build a sample app using State of the Art Architectural components
 
 # Architecture Discussion
 
 # Next Steps
 
 # Punch List of things to do and bugs to fix
+* Finish getting rid of drivers/routes list and use flows only
 * Finish UI compose functions
   * Need to fix the VM functions that provide the data, but Compose itself seems to work
 * Get Room working

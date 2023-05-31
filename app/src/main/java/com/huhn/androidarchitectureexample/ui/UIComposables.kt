@@ -15,8 +15,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.currentComposer
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -28,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -123,7 +122,7 @@ fun DriverScreen(
 
 ) {
     val forceRecomposeState = remember { mutableStateOf( ForceRecomposeState.RECOMPOSE_A) }
-    val drivers = viewModel._drivers.observeAsState()
+    val drivers = viewModel.driversFlow.collectAsStateWithLifecycle()
 
     //actually make the API call
     viewModel.setDrivers()
@@ -186,9 +185,9 @@ fun DriverScreen(
                 UnderlinedText(textString = stringResource(id = R.string.driver_list))
             }
 
-            drivers.value?.size?.let { numberOfDrivers ->
+            drivers.value.size.let { numberOfDrivers ->
                 items(numberOfDrivers) { position ->
-                    val driver = drivers.value!![position]
+                    val driver = drivers.value[position]
                     Row (
                         modifier = Modifier,
                         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -262,7 +261,7 @@ fun RouteScreen(
             )
         }
     ) { it
-        val routes = viewModel._routes.observeAsState()
+        val routes = viewModel.routesFlow.collectAsStateWithLifecycle()
 
         LazyColumn(
             modifier = Modifier.fillMaxWidth(1f),
@@ -296,9 +295,9 @@ fun RouteScreen(
 
                 Spacer(modifier = Modifier.height(15.0.dp))
             }
-            routes.value?.size?.let { numberOfRoutes ->
+            routes.value.size.let { numberOfRoutes ->
                 items(numberOfRoutes) { position ->
-                    val route = routes.value!![position]
+                    val route = routes.value[position]
                     Row (
                         modifier = Modifier,
                         horizontalArrangement = Arrangement.SpaceEvenly,
