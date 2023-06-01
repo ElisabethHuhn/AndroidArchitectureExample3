@@ -27,7 +27,7 @@ interface DriverRepository {
                    routesFlow: MutableStateFlow<List<Route>>,
                    isSorted: Boolean
     )
-    fun findDriver(driverId: String) : Driver?
+    fun findDriver(driverId: String,  foundFlow: MutableStateFlow<Driver>)
 
 //    fun findRoute(driverId: String) : Route?
 }
@@ -74,14 +74,12 @@ class DriverRepositoryImpl : DriverRepository {
          this.routesFlow = routesFlow
          saveisSorted = isSorted
 
-        //TODO this should hide whether the driver data is coming from remote or local
-        //for now, remote data only, and the callback updates the ViewModel LiveData
         //The Compose UI will recompose when the view-model.drivers list changes
         val scope = CoroutineScope(Dispatchers.IO)
         scope.launch {
             val drivers =  getDriversLocal(isSorted = isSorted)
             val routes =  getRoutesLocal()
-            if (drivers.isEmpty()) {
+            if (drivers.isEmpty() || routes.isEmpty()) {
                 saveisSorted = isSorted
                 getDriversRemote(
                     driverRemoteCallbackHandler = driverRemoteCallbackHandler
@@ -102,7 +100,7 @@ class DriverRepositoryImpl : DriverRepository {
             drivers = if (isSorted) {
                 dbDriverDao.sortDriverByAscId()
             } else {
-                dbDriverDao.getAllDrivers()
+                dbDriverDao.sortDriverByDescId()
             }
         }
         job.join()
@@ -140,32 +138,34 @@ class DriverRepositoryImpl : DriverRepository {
         }
     }
 
-    override fun findDriver(driverId: String) : Driver? {
+    override fun findDriver(
+        driverId: String,
+        foundFlow: MutableStateFlow<Driver>
+    ) {
         val driverUid: Int
         try {
             driverUid = driverId.toInt()
         } catch (e: Exception) {
             Log.e("DriverRepository: ", "Bad DriverId: $driverId in findDriver")
-            return null
+            return
         }
         // TODO: Figure out how to job.join more elegantly
-        var driver: Driver? = null
+        var driver: Driver?
 
         val outerScope = CoroutineScope(Dispatchers.IO)
-        val outerJob = outerScope.launch {
+        outerScope.launch {
             val scope = CoroutineScope(Dispatchers.IO)
             val job = scope.launch {
                 driver = findDriverLocal(driverUid)
                 if (driver == null) {
                     // TODO: Need to figure out how to make remote drivers call
                     Log.e("FindDriver", "No local drivers")
-
+                } else {
+                    foundFlow.emit(driver!!)
                 }
             }
             job.join()
         }
-
-        return driver
     }
 
     private suspend fun findDriverLocal(driverUid: Int) : Driver? {
@@ -219,7 +219,7 @@ class DriverRepositoryImpl : DriverRepository {
                         var routesList = response.body()?.routes ?: listOf()
                         //insert the list of drivers into the local DB
                         val outerScope = CoroutineScope(Dispatchers.IO)
-                        val outerJob = outerScope.launch {
+                        outerScope.launch {
                             val scope = CoroutineScope(Dispatchers.IO)
                             val job = scope.launch {
                                 val dbDriverList = driversList.map { driver: Driver ->
@@ -229,6 +229,16 @@ class DriverRepositoryImpl : DriverRepository {
                                     )
                                 }
                                 dbDriverDao.insertAllDrivers(*dbDriverList.toTypedArray())
+
+                                val dbRoutesList = routesList.map { route: Route ->
+                                    DBRoute(
+                                        uid = route.id,
+                                        name = route.name,
+                                        type = route.type
+                                    )
+                                }
+                                dbRouteDao.insertAllRoutes(*dbRoutesList.toTypedArray())
+
                                 driversList = getDriversLocal(isSorted = saveisSorted)
                                 routesList = getRoutesLocal()
                             }
@@ -257,6 +267,33 @@ class DriverRepositoryImpl : DriverRepository {
         scope.launch {
             driversFlow.emit(drivers)
             routesFlow.emit(routes)
+        }
+    }
+
+    fun deleteDriverLocal(driver: Driver)  {
+        val dbDriver =  DBDriver(
+            uid = driver.id.toInt(),
+            name = driver.name
+        )
+        dbDriver.let {
+            val scope = CoroutineScope(Dispatchers.IO)
+            scope.launch {
+                dbDriverDao.deleteDriver(dbDriver)
+            }
+        }
+    }
+
+    fun deleteRouteLocal(route: Route)  {
+        val dbRoute =  DBRoute(
+            uid = route.id,
+            name = route.name,
+            type = route.type
+        )
+        dbRoute.let {
+            val scope = CoroutineScope(Dispatchers.IO)
+            scope.launch {
+                dbRouteDao.deleteRoute(dbRoute)
+            }
         }
     }
 

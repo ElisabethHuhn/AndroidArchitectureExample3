@@ -15,8 +15,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
@@ -121,8 +120,9 @@ fun DriverScreen(
     viewModel: DriverViewModelImpl
 
 ) {
-    val forceRecomposeState = remember { mutableStateOf( ForceRecomposeState.RECOMPOSE_A) }
     val drivers = viewModel.driversFlow.collectAsStateWithLifecycle()
+    val routes = viewModel.routesFlow.collectAsStateWithLifecycle()
+    val isSortedFlag = viewModel.isSorted.observeAsState()
 
     //actually make the API call
     viewModel.getDrivers()
@@ -146,17 +146,9 @@ fun DriverScreen(
                 content = { Text(text = "Sort")},
                 onClick = {
                     /*TODO Sort alphabetically by last name*/
-                    var sortingParm = true
-                    if (viewModel.isSorted) sortingParm = false
-                    viewModel.isSorted = sortingParm
-                    viewModel.getDrivers()
 
-                    /* redisplay DriverScreen */
-//                    currentComposer.composition.recompose()
-                    if (forceRecomposeState.value == ForceRecomposeState.RECOMPOSE_A)
-                        forceRecomposeState.value = ForceRecomposeState.RECOMPOSE_B
-                    else
-                        forceRecomposeState.value = ForceRecomposeState.RECOMPOSE_A
+                    viewModel.toggleIsSorted()
+                    viewModel.getDrivers()
                 },
                 shape = RectangleShape,
             )
@@ -173,16 +165,22 @@ fun DriverScreen(
         ) {
             item {
                 Spacer(modifier = Modifier.height(95.0.dp))
-                Text(text = BuildConfig.BUILD_TYPE_STRING)
+                Text(text = "Build Config Type: ${BuildConfig.BUILD_TYPE_STRING}")
             }
             item {
                 Spacer(modifier = Modifier.height(5.0.dp))
+                Text(text = "Build Type String Resource =")
                 Text(text = stringResource(id = R.string.build_type_res))
             }
 
             item {
                 Spacer(modifier = Modifier.height(15.0.dp))
-                UnderlinedText(textString = stringResource(id = R.string.driver_list))
+                Text(
+                    text = stringResource(R.string.nav_instructions),
+                    fontSize = 20.sp,
+                    modifier = Modifier,
+                    fontStyle = FontStyle.Italic
+                )
             }
 
             drivers.value.size.let { numberOfDrivers ->
@@ -204,19 +202,17 @@ fun DriverScreen(
                     }
                 }
             }
+
             item {
                 Spacer(modifier = Modifier.height(15.0.dp))
                 Text(
-                    text = stringResource(R.string.nav_instructions),
+                    text = stringResource(id = R.string.is_sorted_label),
                     fontSize = 20.sp,
                     modifier = Modifier,
-                    fontStyle = FontStyle.Italic
+                    fontWeight = FontWeight.Bold
                 )
-            }
-            item {
-                Spacer(modifier = Modifier.height(15.0.dp))
                 Text(
-                    text = stringResource(R.string.is_sorted, viewModel.isSorted),
+                    text = stringResource(R.string.is_sorted, isSortedFlag.value.toString()),
                     fontSize = 20.sp,
                     modifier = Modifier,
                     fontWeight = FontWeight.Bold
@@ -226,15 +222,29 @@ fun DriverScreen(
                 Button(
                     onClick = {
                         //Print out the list of drivers
-                        drivers.value.forEach { driver ->
-                            println("DriverID: ${driver.id} is named: ${driver.name} " )
-                        }
+                       viewModel.printDrivers(drivers.value)
                     })
                 {
                     Text(text = stringResource(id = R.string.print_button))
                 }
             }
 
+            item {
+                Button(
+                    onClick = {
+                        //Delete All Drivers
+                        drivers.value.forEach { driver ->
+                            viewModel.deleteDriver(driver)
+                        }
+                        //And all routes
+                        routes.value.forEach { route ->
+                            viewModel.deleteRoute(route)
+                        }
+                    })
+                {
+                    Text(text = stringResource(id = R.string.delete_button))
+                }
+            }
         }
     }
 }
@@ -264,6 +274,8 @@ fun RouteScreen(
         }
     ) { it
         val routes = viewModel.routesFlow.collectAsStateWithLifecycle()
+        val driver = viewModel.foundDriverFlow.collectAsStateWithLifecycle()
+        viewModel.findDriver(driverId)
 
         LazyColumn(
             modifier = Modifier.fillMaxWidth(1f),
@@ -279,16 +291,15 @@ fun RouteScreen(
                 )
             }
             item {
-                val driver = viewModel.findDriver(driverId)
+
                 Spacer(modifier = Modifier.height(5.0.dp))
                 Row (
                     modifier = Modifier,
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    //Note defaults if driver is null
-                    Text(text = driver?.id ?: "0")
-                    Text(text = driver?.name ?: "Driver Zero")
+                    Text(text = driver.value.id)
+                    Text(text = driver.value.name)
                 }
             }
             item {

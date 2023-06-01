@@ -1,6 +1,7 @@
 package com.huhn.androidarchitectureexample.repository.localDataSource
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.huhn.androidarchitectureexample.repository.localDataSource.dbModel.DBDriver
@@ -33,7 +34,7 @@ interface DBDriverDao {
 
 //    @Update
 //    suspend fun updateDriver(driver: DBDriver)
-//
-//    @Delete
-//    suspend fun deleteDriver(DBDriver: DBDriver)
+
+    @Delete
+    suspend fun deleteDriver(DBDriver: DBDriver)
 }
