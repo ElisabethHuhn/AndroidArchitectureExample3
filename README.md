@@ -37,3 +37,4 @@ Build a sample app using State of the Art Architectural components
     * remote data source (Retrofit)
 * Figure out objects eg DBDriver vs Driver
 * Go through the TODOs and decide whether to address them or not.
+* Fill out the sections of this README document
