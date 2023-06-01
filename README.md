@@ -17,26 +17,23 @@ This project is an example of State of the Art Android Architecture circa 2023. 
   * localDataSource is ROOM DB
   * remoteDataSource is RetroFit2
 * Use Flows to move lists back to UI compose (via the ViewModel) from Repository
+* Coroutines for both serial and parallel structured concurrency
 * Unit Testing
-
 
 # Requirements
 Build a sample app using State of the Art Architectural components
 
 # Architecture Discussion
+* some words around what the architecture is, what the alternatives were, and why I made the choices I did
 
 # Next Steps
 
 # Punch List of things to do and bugs to fix
+* Figure out testing 
+  * Test UI
+  * Test ViewModel
+  * Test Repository
+    * local data source (ROOM)
+    * remote data source (Retrofit)
 * Figure out objects eg DBDriver vs Driver
-* Finish getting rid of drivers/routes list and use flows only
-* Finish UI compose functions
-  * Need to fix the VM functions that provide the data, but Compose itself seems to work
-* Get Room working
-* When the VM comes up, 
-  * When the Repository comes up, Retrofit is called to get the list of drivers and Routes
-  * when the response returns, create the DB and fill it
-  * getDrivers queries the DB for the drivers
-    * if it doesn't get any, query retrofit for the remote list
-* Once Repository is in place, fix VM methods
-* Figure out testing (using the VM functions to cheat Repository)
+* Go through the TODOs and decide whether to address them or not.
