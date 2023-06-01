@@ -11,9 +11,9 @@ interface DBRouteDao {
 
 //    @Query("SELECT * FROM DBRoute WHERE uid IN (:DBRouteIds)")
 //    suspend fun loadAllRoutesByIds(DBRouteIds: IntArray): List<DBRoute>
-//
-//    @Query("SELECT * FROM DBRoute WHERE name LIKE :name  LIMIT 1")
-//    suspend fun findRouteByName(name: String): DBRoute
+
+    @Query("SELECT * FROM DBRoute WHERE name LIKE :name  LIMIT 1")
+    suspend fun findRouteByName(name: String): DBRoute
 //
 //    @Insert
 //    suspend fun insertAllRoutes(vararg DBRoutes: DBRoute)

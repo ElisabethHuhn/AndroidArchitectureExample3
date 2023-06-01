@@ -28,6 +28,7 @@ Build a sample app using State of the Art Architectural components
 # Next Steps
 
 # Punch List of things to do and bugs to fix
+* Figure out objects eg DBDriver vs Driver
 * Finish getting rid of drivers/routes list and use flows only
 * Finish UI compose functions
   * Need to fix the VM functions that provide the data, but Compose itself seems to work

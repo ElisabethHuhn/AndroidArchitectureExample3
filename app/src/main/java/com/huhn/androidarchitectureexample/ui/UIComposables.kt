@@ -125,7 +125,7 @@ fun DriverScreen(
     val drivers = viewModel.driversFlow.collectAsStateWithLifecycle()
 
     //actually make the API call
-    viewModel.setDrivers()
+    viewModel.getDrivers()
 
     Scaffold(
         topBar = {
@@ -149,9 +149,9 @@ fun DriverScreen(
                     var sortingParm = true
                     if (viewModel.isSorted) sortingParm = false
                     viewModel.isSorted = sortingParm
-                    viewModel.setDrivers()
+                    viewModel.getDrivers()
 
-                    /* TODO redisplay DriverScreen */
+                    /* redisplay DriverScreen */
 //                    currentComposer.composition.recompose()
                     if (forceRecomposeState.value == ForceRecomposeState.RECOMPOSE_A)
                         forceRecomposeState.value = ForceRecomposeState.RECOMPOSE_B
@@ -226,7 +226,9 @@ fun DriverScreen(
                 Button(
                     onClick = {
                         //Print out the list of drivers
-                        viewModel.printDrivers()
+                        drivers.value.forEach { driver ->
+                            println("DriverID: ${driver.id} is named: ${driver.name} " )
+                        }
                     })
                 {
                     Text(text = stringResource(id = R.string.print_button))
