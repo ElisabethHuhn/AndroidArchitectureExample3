@@ -38,3 +38,34 @@ Build a sample app using State of the Art Architectural components
 * Figure out objects eg DBDriver vs Driver
 * Go through the TODOs and decide whether to address them or not.
 * Fill out the sections of this README document
+
+# Near Exhaustive list of Testing Types
+* Functional - Does it do what the requirements say it should do
+* Non-functional - Performance, Capacity, Throughput, Power consumption, network reception
+* Android UI
+  * component visibility
+  * user interaction (event detection and response actions conform to requirements)
+* Device Compatibility
+  * OS version
+  * Device Model
+  * Screen Size
+  * Screen Resolution
+  * Network Connectivity
+* Integration Testing
+* Network Testing
+  * Connectivity
+  * Intermittent reception
+  * Field testing with Mobile Data Network
+* Installation Testing
+* Security Testing
+* Bucket or A/B testing
+
+# Android Tests
+* Unit Tests
+  * JUnit
+  * Robolectric
+  * Mockito
+* Integration Tests
+* UI Tests
+  * Expresso
+  * UI Automator
