@@ -18,11 +18,11 @@ interface DBRouteDao {
     suspend fun findRouteByName(name: String): DBRoute
 
     @Insert
-    suspend fun insertAllRoutes(vararg DBRoutes: DBRoute)
+    suspend fun insertAllRoutes(vararg dbRoutes: DBRoute)
 
 //    @Update
 //    suspend fun updateRoute(route: DBRoute)
 
     @Delete
-    suspend fun deleteRoute(DBRoute: DBRoute)
+    suspend fun deleteRoute(dbRoute: DBRoute)
 }
