@@ -15,24 +15,28 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavType
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.huhn.androidarchitectureexample.BuildConfig
 import com.huhn.androidarchitectureexample.R
+import com.huhn.androidarchitectureexample.viewmodel.DriverState
+import com.huhn.androidarchitectureexample.viewmodel.DriverUserEvent
 import com.huhn.androidarchitectureexample.viewmodel.DriverViewModelImpl
 
 /*
@@ -56,10 +60,6 @@ object RouteDestination : ScreenDestination {
         get() = "route_screen"
     override val title: Int
         get() = R.string.route_title
-    const val driverIdArg = "driverId"
-    val routeWithArg: String = "$route/{$driverIdArg}"
-    val arguments = listOf(navArgument(driverIdArg) {type = NavType.StringType})
-    fun getNavigationDriverToRoute(driverId: String) = "$route/$driverId"
 }
 
 /*
@@ -69,63 +69,68 @@ object RouteDestination : ScreenDestination {
 @Composable
 fun MainNavGraph(
     driverViewModel: DriverViewModelImpl,
+    navController: NavHostController = rememberNavController()
 ){
-    val navController = rememberNavController()
-
     NavHost(
         navController = navController,
         startDestination =  DriverDestination.route
     ){
         composable(DriverDestination.route){
             //pass navigation as parameter
-            DriverScreen(
+            DriverRoute(
                 screenTitle = DriverDestination.title,
-                onDriverSelect = {
-                    val toDes = RouteDestination.getNavigationDriverToRoute(it)
-                    navController.navigate(
-                        toDes
-                    )
-                },
-                viewModel = driverViewModel,
+                onNavigateToRoute = navController::navigateToRouteRoute,
+                driveViewModel = driverViewModel,
             )
         }
 
         composable(
-            route = RouteDestination.routeWithArg,
-            arguments = RouteDestination.arguments,
+            route = RouteDestination.route,
         ){ backStackEntry ->
             //pass navigation as parameter
-            RouteScreen(
+            RouteRoute(
                 screenTitle = RouteDestination.title,
-                driverId = backStackEntry.arguments?.getString(
-                    RouteDestination.driverIdArg
-                ) ?: "",
-                onBack = {
-                    val toDest = DriverDestination.route
-                     navController.navigate(toDest)
-                },
-                viewModel = driverViewModel,
+                onBack = navController::navigateToDriverRoute, //TODO try with backStackEntry
+                driveViewModel = driverViewModel,
             )
         }
     }
 }
 
+fun NavController.navigateToDriverRoute(navOptions: NavOptions? = null){
+    this.navigate(route = DriverDestination.route, navOptions = navOptions)
+}
+fun NavController.navigateToRouteRoute(navOptions: NavOptions? = null){
+    this.navigate(route = RouteDestination.route, navOptions = navOptions)
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DriverRoute(
+    screenTitle: Int,
+    onNavigateToRoute: () -> Unit,
+    driveViewModel: DriverViewModelImpl,
+){
+    val driverState by driveViewModel.driverState.collectAsStateWithLifecycle()
+
+    DriverScreen(
+        screenTitle = screenTitle,
+        driverState = driverState,
+        onUserEvent = driveViewModel::onDriverUserEvent,
+        onNavigateToRoute = onNavigateToRoute,
+    )
+}
 
 @ExperimentalMaterial3Api
 @Composable
 fun DriverScreen(
     screenTitle : Int,
-    onDriverSelect: (driverId: String) -> Unit,
-    viewModel: DriverViewModelImpl
-
+    driverState: DriverState,
+    onUserEvent: (DriverUserEvent) -> Unit,
+    onNavigateToRoute: () -> Unit,
 ) {
-    val drivers = viewModel.driversFlow.collectAsStateWithLifecycle()
-    val routes = viewModel.routesFlow.collectAsStateWithLifecycle()
-    val isSortedFlag = viewModel.isSorted.observeAsState()
-
     //actually make the API call
-    viewModel.getDrivers()
+    onUserEvent(DriverUserEvent.GetDrivers)
 
     Scaffold(
         topBar = {
@@ -134,6 +139,7 @@ fun DriverScreen(
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Text(
                             text = stringResource(screenTitle),
+                            textAlign = TextAlign.Center,
                             fontSize = 30.sp,
                             modifier = Modifier.align(Alignment.Center)
                         )
@@ -145,18 +151,13 @@ fun DriverScreen(
             FloatingActionButton(
                 content = { Text(text = "Sort")},
                 onClick = {
-                    /*TODO Sort alphabetically by last name*/
-
-                    viewModel.toggleIsSorted()
-                    viewModel.getDrivers()
+                    onUserEvent(DriverUserEvent.ToggleIsSorted)
+                    onUserEvent(DriverUserEvent.GetDrivers)
                 },
                 shape = RectangleShape,
             )
         }
-
     ) { it
-
-
         Spacer(modifier = Modifier.height(95.0.dp))
         LazyColumn(
             modifier = Modifier.fillMaxWidth(1f),
@@ -179,24 +180,31 @@ fun DriverScreen(
                     text = stringResource(R.string.nav_instructions),
                     fontSize = 20.sp,
                     modifier = Modifier,
-                    fontStyle = FontStyle.Italic
+                    fontStyle = FontStyle.Italic,
+                    fontWeight = FontWeight.Bold
                 )
+                Spacer(modifier = Modifier.height(15.0.dp))
             }
-
-            drivers.value.size.let { numberOfDrivers ->
-                items(numberOfDrivers) { position ->
-                    val driver = drivers.value[position]
+            driverState.drivers?.let { drivers ->
+                items(drivers.size) { position ->
+                    val driver = drivers[position]
                     Row (
                         modifier = Modifier,
                         horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            modifier = Modifier.clickable { onDriverSelect(driver.id)  },
+                            modifier = Modifier.clickable {
+                                onUserEvent(DriverUserEvent.SaveDriver(driver))
+                                onNavigateToRoute.invoke()
+                                                          },
                             text = driver.id
                         )
                         Text(
-                            modifier = Modifier.clickable { onDriverSelect(driver.id)  },
+                            modifier = Modifier.clickable {
+                                onUserEvent(DriverUserEvent.SaveDriver(driver))
+                                onNavigateToRoute.invoke()
+                                                          },
                             text = driver.name
                         )
                     }
@@ -206,13 +214,7 @@ fun DriverScreen(
             item {
                 Spacer(modifier = Modifier.height(15.0.dp))
                 Text(
-                    text = stringResource(id = R.string.is_sorted_label),
-                    fontSize = 20.sp,
-                    modifier = Modifier,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = stringResource(R.string.is_sorted, isSortedFlag.value.toString()),
+                    text = stringResource(R.string.is_sorted, driverState.isSorted.toString()),
                     fontSize = 20.sp,
                     modifier = Modifier,
                     fontWeight = FontWeight.Bold
@@ -222,7 +224,7 @@ fun DriverScreen(
                 Button(
                     onClick = {
                         //Print out the list of drivers
-                       viewModel.printDrivers(drivers.value)
+                        onUserEvent(DriverUserEvent.PrintDrivers)
                     })
                 {
                     Text(text = stringResource(id = R.string.print_button))
@@ -232,31 +234,54 @@ fun DriverScreen(
             item {
                 Button(
                     onClick = {
-                        //Delete All Drivers
-                        drivers.value.forEach { driver ->
-                            viewModel.deleteDriver(driver)
-                        }
-                        //And all routes
-                        routes.value.forEach { route ->
-                            viewModel.deleteRoute(route)
-                        }
+                        //Delete All Drivers and Routes
+                        onUserEvent(DriverUserEvent.DeleteDriversRoutes)
+
+                        //reset is sorted
+                        onUserEvent(DriverUserEvent.ResetIsSorted)
+
+                       //read in new driver list
+                        onUserEvent(DriverUserEvent.GetDrivers)
                     })
                 {
                     Text(text = stringResource(id = R.string.delete_button))
                 }
+            }
+            item {
+                Spacer(modifier = Modifier.height(15.0.dp))
+                Text(
+                    text = stringResource(id = R.string.is_sorted_label),
+                    fontSize = 20.sp,
+                    modifier = Modifier,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
 }
 
 
+@Composable
+fun RouteRoute(
+    screenTitle: Int,
+    onBack: () -> Unit,
+    driveViewModel: DriverViewModelImpl,
+){
+    val driverState by driveViewModel.driverState.collectAsStateWithLifecycle()
+
+    RouteScreen(
+        screenTitle = screenTitle,
+        onBack = onBack,
+        driverState = driverState,
+
+    )
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RouteScreen(
     screenTitle: Int,
-    driverId: String,
     onBack: () -> Unit,
-    viewModel: DriverViewModelImpl
+    driverState: DriverState,
 ) {
     Scaffold(
         topBar = {
@@ -265,6 +290,7 @@ fun RouteScreen(
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Text(
                             text = stringResource(screenTitle),
+                            textAlign = TextAlign.Center,
                             fontSize = 30.sp,
                             modifier = Modifier.align(Alignment.Center)
                         )
@@ -273,9 +299,6 @@ fun RouteScreen(
             )
         }
     ) { it
-        val routes = viewModel.routesFlow.collectAsStateWithLifecycle()
-        val driver = viewModel.foundDriverFlow.collectAsStateWithLifecycle()
-        viewModel.findDriver(driverId)
 
         LazyColumn(
             modifier = Modifier.fillMaxWidth(1f),
@@ -298,8 +321,8 @@ fun RouteScreen(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = driver.value.id)
-                    Text(text = driver.value.name)
+                    Text(text = driverState.savedDriver?.id ?: "")
+                    Text(text = driverState.savedDriver?.name ?: "")
                 }
             }
             item {
@@ -308,9 +331,10 @@ fun RouteScreen(
 
                 Spacer(modifier = Modifier.height(15.0.dp))
             }
-            routes.value.size.let { numberOfRoutes ->
+            driverState.routes?.let {routes ->
+                val numberOfRoutes= routes.size
                 items(numberOfRoutes) { position ->
-                    val route = routes.value[position]
+                    val route = routes[position]
                     Row (
                         modifier = Modifier,
                         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -325,6 +349,7 @@ fun RouteScreen(
                     }
                 }
             }
+
             item {
                 Button(
                     onClick = {

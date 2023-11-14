@@ -7,11 +7,12 @@ This project is an example of State of the Art Android Architecture circa 2023. 
   * For now, the only classes that are injected are the ViewModel and Repository
 * Compose for building UI
   * Also uses Compose NavGraph navigation
-* MVVM to
+* MVI to
   * persist UI local cache across orientation changes
   * business logic to calculate values for UI display
   * business logic for actions in response to UI events
   * UI state variables governing UI compose
+  * User Events (The I in MVI "intents") to execute actions in response to user triggers
 * Repository to separate business logic from Data Source
   * Examples of both localDataSource and remoteDataSource
   * localDataSource is ROOM DB
@@ -29,6 +30,12 @@ Build a sample app using State of the Art Architectural components
 # Next Steps
 
 # Punch List of things to do and bugs to fix
+* Convert to MVI
+  * Create Contract file for each screen
+  * convert navigation to Route/Screen where Route gathers the nav paths/state/user events/actions and passes to screen
+  * convert state to mutableStateFlow from LiveData
+  * Convert user triggers to intents
+* Convert remote calls to coroutines from callbacks
 * Figure out testing 
   * Test UI
   * Test ViewModel
@@ -67,5 +74,5 @@ Build a sample app using State of the Art Architectural components
   * Mockito
 * Integration Tests
 * UI Tests
-  * Expresso
+  * Espresso
   * UI Automator

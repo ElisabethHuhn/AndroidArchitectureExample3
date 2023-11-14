@@ -1,12 +1,14 @@
 package com.huhn.androidarchitectureexample.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.huhn.androidarchitectureexample.repository.DriverRepositoryImpl
 import com.huhn.androidarchitectureexample.repository.remoteDataSource.networkModel.Driver
 import com.huhn.androidarchitectureexample.repository.remoteDataSource.networkModel.Route
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 // TODO: Figure out how to do this using Koin
 //interface DriverViewModel {
@@ -18,59 +20,101 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 class DriverViewModelImpl(private val repo : DriverRepositoryImpl) : ViewModel()
 {
-    private var _isSorted = MutableLiveData<Boolean>()
-    val isSorted : LiveData<Boolean>
-        get() = _isSorted
-    fun toggleIsSorted() {
+    private val _driverState = MutableStateFlow(DriverState())
+    val driverState = _driverState.asStateFlow()
+
+    fun onDriverUserEvent(event: DriverUserEvent) {
+        when (event) {
+            is DriverUserEvent.ToggleIsSorted -> toggleIsSorted()
+            is DriverUserEvent.ResetIsSorted -> resetIsSorted()
+            is DriverUserEvent.GetDrivers -> getDrivers()
+            is DriverUserEvent.SaveDriver -> onSaveDriverChanged(event.driver)
+            is DriverUserEvent.PrintDrivers -> printDrivers()
+            is DriverUserEvent.DeleteDriversRoutes -> deleteDriversRoutes()
+        }
+    }
+
+
+    //region state update functions
+    private fun toggleIsSorted() {
         var newIsSorted = true
-        if (isSorted.value == true) newIsSorted = false
-        setIsSorted(newIsSorted)
-    }
-    private fun setIsSorted(isSorted: Boolean) {
-        _isSorted.value = isSorted
-    }
+        if (_driverState.value.isSorted) newIsSorted = false
 
-    val driversFlow : MutableStateFlow<List<Driver>> = MutableStateFlow(listOf())
-    val foundDriverFlow : MutableStateFlow<Driver> = MutableStateFlow(Driver(id = "0", name = "Zero"))
-
-    val routesFlow : MutableStateFlow<List<Route>> = MutableStateFlow(listOf())
-
-    fun getDrivers()  {
-        val isSortedFlag = isSorted.value ?: false
-        repo.getDrivers(
-            driversFlow = driversFlow,
-            routesFlow = routesFlow,
-            isSorted = isSortedFlag
-        )
+        _driverState.update {
+            it.copy(isSorted = newIsSorted)
+        }
     }
 
-
-    fun findDriver(driverId: String) {
-        // TODO: return a specific route based on business rules
-        //for now just punt
-        repo.findDriver(driverId = driverId, foundFlow = foundDriverFlow)
-        //The UI uses the flow as state, and thus gets updated on the return
+    private fun resetIsSorted() {
+        _driverState.update {
+            it.copy(isSorted = false)
+        }
     }
 
-
-    fun findRoute(driverId: String): Route {
-        //TODO actually implement this using business rules from problem domain
-        return Route(id= 0, name = "Route Zero", type = "I")
+    private fun onDriverListChanged (drivers: List<Driver>) {
+        _driverState.update {
+            it.copy(drivers = drivers)
+        }
     }
 
-    fun deleteDriver(driver: Driver) {
+    private fun onRouteListChanged (routes: List<Route>) {
+        _driverState.update {
+            it.copy(routes = routes)
+        }
+    }
+
+    private fun onSaveDriverChanged(driver: Driver?){
+        _driverState.update {
+            it.copy(savedDriver = driver)
+        }
+    }
+
+    //end region
+
+    //region actions in response to user event triggers. See onUserEvent() above
+
+    private fun getDrivers()  {
+        val isSortedFlag = _driverState.value.isSorted
+        viewModelScope.launch {
+            val driverResponse = repo.fetchDriverLists(isSorted = isSortedFlag)
+            //now update the state with the lists
+            onDriverListChanged(drivers = driverResponse.drivers)
+            onRouteListChanged(routes = driverResponse.routes)
+        }
+    }
+
+    private fun deleteDriversRoutes () {
+        deleteDrivers()
+        deleteRoutes()
+        onDriverListChanged(listOf())
+    }
+    private fun deleteDrivers () {
+        _driverState.value.drivers?.forEach { driver ->
+            deleteDriver(driver)
+        }
+    }
+    private fun deleteDriver(driver: Driver) {
         repo.deleteDriverLocal(driver = driver)
     }
 
-    fun deleteRoute(route: Route) {
+    private fun deleteRoutes(){
+        _driverState.value.routes?.forEach { route ->
+            deleteRoute(route)
+        }
+    }
+
+    private fun deleteRoute(route: Route) {
         repo.deleteRouteLocal(route = route)
     }
 
-    fun printDrivers(driverList: List<Driver>) {
+    private fun printDrivers() {
+        val driverList: List<Driver> = _driverState.value.drivers ?: listOf()
         println("List of Drivers:")
         driverList.forEach { driver ->
             val msg = "DriverID: ${driver.id} is named: ${driver.name} "
             println( msg)
         }
     }
+
+    //end region
 }

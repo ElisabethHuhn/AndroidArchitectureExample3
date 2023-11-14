@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+//    id("com.google.devtools.ksp")
 }
 
 android {
@@ -80,14 +81,10 @@ dependencies {
     implementation 'androidx.compose.ui:ui-tooling-preview'
     implementation 'androidx.compose.material3:material3'
     implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.1"
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'junit:junit:4.12'
 
     //navigation
      def nav_version = "2.5.3"
     implementation "androidx.navigation:navigation-compose:$nav_version"
-
-
 
     //Room Library
     def room_version = "2.5.1"
@@ -95,16 +92,17 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version"
     // Kotlin Extensions and Coroutines support for Room
     implementation "androidx.room:room-ktx:$room_version"
+//    ksp "androidx.room:room-compiler:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
 //    kapt 'android.arch.persistence.room:compiler:1.1.1'
 
     //kotlin coroutines
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1"
 
     //coroutine lifecycle scopes
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1"
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2'
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2"
 
     //retrofit
     implementation 'com.google.code.gson:gson:2.10.1'
@@ -112,23 +110,11 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
     //Koin for dependency
-//    implementation "org.koin:koin-android:2.0.1"
-//    implementation 'org.koin:koin-androidx-viewmodel:2.0.1'
-//    implementationplementation 'org.koin:koin-androidx-scope:2.0.1'
-    def koin_version = "3.3.1"
+    def koin_version = "3.4.3"
     implementation "io.insert-koin:koin-android:$koin_version"
 
-
     // Lifecycle components
-//    annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.6.1'
-//    androidTestImplementation "androidx.arch.core:core-testing:2.2.0"
-
-//    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.1"
-//    implementation "androidx.lifecycle:lifecycle-common-java8:2.3.1"
-//    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-
     implementation "androidx.compose.runtime:runtime-livedata:1.5.0-beta01"
-
 
     //Picasso
 //    implementation 'com.squareup.picasso:picasso:2.71828'
