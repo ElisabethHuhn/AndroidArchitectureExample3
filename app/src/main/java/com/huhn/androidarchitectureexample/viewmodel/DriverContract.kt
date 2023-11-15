@@ -12,10 +12,10 @@ data class DriverState(
     )
 
 sealed interface DriverUserEvent {
-    object ToggleIsSorted : DriverUserEvent
-    object ResetIsSorted : DriverUserEvent
-    object GetDrivers : DriverUserEvent
+    data object ToggleIsSorted : DriverUserEvent
+    data object ResetIsSorted : DriverUserEvent
+    data object GetDrivers : DriverUserEvent
     data class SaveDriver(val driver : Driver) : DriverUserEvent
-    object PrintDrivers : DriverUserEvent
-    object DeleteDriversRoutes : DriverUserEvent
+    data object PrintDrivers : DriverUserEvent
+    data object DeleteDriversRoutes : DriverUserEvent
 }
