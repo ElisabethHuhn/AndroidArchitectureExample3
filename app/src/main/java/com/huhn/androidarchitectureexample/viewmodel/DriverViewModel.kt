@@ -5,13 +5,19 @@ import androidx.lifecycle.viewModelScope
 import com.huhn.androidarchitectureexample.repository.DriverRepositoryImpl
 import com.huhn.androidarchitectureexample.repository.remoteDataSource.networkModel.Driver
 import com.huhn.androidarchitectureexample.repository.remoteDataSource.networkModel.Route
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class DriverViewModel(private val repo : DriverRepositoryImpl) : ViewModel()
+class DriverViewModel() : ViewModel()
 {
+    private var repo : DriverRepositoryImpl
+
+    init {
+        repo = DriverRepositoryImpl()
+    }
     private val _driverState = MutableStateFlow(DriverState())
     var driverState = _driverState.asStateFlow()
 
@@ -23,6 +29,7 @@ class DriverViewModel(private val repo : DriverRepositoryImpl) : ViewModel()
             is DriverUserEvent.SaveDriver -> onSaveDriverChanged(event.driver)
             is DriverUserEvent.PrintDrivers -> printDrivers()
             is DriverUserEvent.DeleteDriversRoutes -> deleteDriversRoutes()
+            is DriverUserEvent.ClearError -> onClearError()
         }
     }
 
@@ -60,20 +67,40 @@ class DriverViewModel(private val repo : DriverRepositoryImpl) : ViewModel()
         }
     }
 
+    private fun onClearError(){
+        _driverState.update {
+            it.copy(errors = "driver")
+        }
+    }
+
     //end region
 
     //region actions in response to user event triggers. See onUserEvent() above
 
+    val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        _driverState.update {
+            it.copy(errors = throwable.message ?: "CoroutineExceptionHandler : Error loading drivers and routes")
+        }
+    }
+
     private fun getDrivers()  {
         val isSortedFlag = _driverState.value.isSorted
-        viewModelScope.launch {
-            val driverResponse = repo.fetchDriverLists(
-                isSorted = isSortedFlag,
-                viewModelScope
-            )
-            //now update the state with the lists
-            onDriverListChanged(drivers = driverResponse.drivers)
-            onRouteListChanged(routes = driverResponse.routes)
+        viewModelScope.launch(exceptionHandler) {
+            try {
+                val driverResponse = repo.fetchDriverLists(
+                    isSorted = isSortedFlag,
+                    viewModelScope
+                )
+                //now update the state with the lists
+                onDriverListChanged(drivers = driverResponse.drivers)
+                onRouteListChanged(routes = driverResponse.routes)
+            }
+            catch (e: Exception) {
+                _driverState.update {
+                    it.copy(errors = e.message ?: "Try/Catch: Error loading drivers and routes")
+                }
+            }
+
         }
     }
 

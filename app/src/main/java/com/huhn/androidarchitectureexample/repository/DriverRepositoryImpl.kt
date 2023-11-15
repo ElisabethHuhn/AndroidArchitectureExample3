@@ -1,12 +1,12 @@
 package com.huhn.androidarchitectureexample.repository
 
-import androidx.room.Room
 import com.huhn.androidarchitectureexample.application.AndroidArchitectureExampleApplication
 import com.huhn.androidarchitectureexample.repository.localDataSource.AppDatabase
 import com.huhn.androidarchitectureexample.repository.localDataSource.DBDriverDao
 import com.huhn.androidarchitectureexample.repository.localDataSource.DBRouteDao
 import com.huhn.androidarchitectureexample.repository.localDataSource.dbModel.DBDriver
 import com.huhn.androidarchitectureexample.repository.localDataSource.dbModel.DBRoute
+import com.huhn.androidarchitectureexample.repository.remoteDataSource.DriverApiService
 import com.huhn.androidarchitectureexample.repository.remoteDataSource.RetrofitHelper
 import com.huhn.androidarchitectureexample.repository.remoteDataSource.networkModel.Driver
 import com.huhn.androidarchitectureexample.repository.remoteDataSource.networkModel.DriverResponse
@@ -15,14 +15,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 
-interface DriverRepository {
-    suspend fun fetchDriverLists(isSorted: Boolean, scope: CoroutineScope) : DriverResponse
-}
+//interface DriverRepository (
+//    val db: AppDatabase = AndroidArchitectureExampleApplication.roomDb,
+//    val driverApiService: DriverApiService = RetrofitHelper.driverApi
+//){
+//    suspend fun fetchDriverLists(isSorted: Boolean, scope: CoroutineScope) : DriverResponse
+//}
 
 
-class DriverRepositoryImpl : DriverRepository {
+class DriverRepositoryImpl ( //): DriverRepository (
+    val roomDb: AppDatabase = AndroidArchitectureExampleApplication.roomDb,
+    val driverApiService: DriverApiService = RetrofitHelper.driverApi
+) {
     //local data source variables
-    private var db: AppDatabase
     private var dbDriverDao: DBDriverDao
     private var dbRouteDao: DBRouteDao
 
@@ -30,19 +35,11 @@ class DriverRepositoryImpl : DriverRepository {
         /*
          * Create the DAOs corresponding to the db tables
          */
-        db = createDb()
-        dbDriverDao = db.dbDriverDao()
-        dbDriverDao = db.dbDriverDao()
-        dbRouteDao = db.dbRouteDao()
-
-        /*
-         * Use RetrofitHelper to create the instance of Retrofit
-         * Then use this instance to create an instance of the API
-         */
-//        driverApi = RetrofitHelper.getInstance().create(DriverApiService::class.java)
+        dbDriverDao = roomDb.dbDriverDao()
+        dbRouteDao = roomDb.dbRouteDao()
     }
 
-     override suspend fun fetchDriverLists(
+    suspend fun fetchDriverLists(
          isSorted: Boolean,
          scope: CoroutineScope
      ) : DriverResponse {
@@ -126,7 +123,7 @@ class DriverRepositoryImpl : DriverRepository {
         //perform these actions serially, so make serial fcn calls
 
         //Get the drivers and routes from the remote network call
-        var driversResponse = RetrofitHelper.driverApi.fetchDriverResponse()
+        var driversResponse = driverApiService.fetchDriverResponse()
 
         //then update the local DB with them
         insertDriversAndRoutesIntoDb(
@@ -202,14 +199,5 @@ class DriverRepositoryImpl : DriverRepository {
         dbRoute.let {
             dbRouteDao.deleteRoute(dbRoute)
         }
-    }
-
-    private fun createDb() :  AppDatabase{
-        val appContext = AndroidArchitectureExampleApplication.appContext
-
-        return Room.databaseBuilder(
-            appContext,
-            AppDatabase::class.java, "aae-database"
-        ).build()
     }
 }

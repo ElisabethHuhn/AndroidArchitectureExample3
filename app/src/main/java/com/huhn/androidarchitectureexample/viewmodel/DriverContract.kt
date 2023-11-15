@@ -8,7 +8,8 @@ data class DriverState(
     val selectedDriver : Driver? = null,
     val savedDriver: Driver? = null,
     val isSorted: Boolean = false,
-    val routes : List<Route>? = null
+    val routes : List<Route>? = null,
+    val errors: String = ""
     )
 
 sealed interface DriverUserEvent {
@@ -18,4 +19,5 @@ sealed interface DriverUserEvent {
     data class SaveDriver(val driver : Driver) : DriverUserEvent
     data object PrintDrivers : DriverUserEvent
     data object DeleteDriversRoutes : DriverUserEvent
+    data object ClearError : DriverUserEvent
 }

@@ -166,6 +166,25 @@ fun DriverScreen(
         ) {
             item {
                 Spacer(modifier = Modifier.height(95.0.dp))
+                if (driverState.errors.isNotEmpty()) {
+                     Text(
+                        text = driverState.errors,
+                        fontSize = 20.sp,
+                        modifier = Modifier,
+                        fontStyle = FontStyle.Italic,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Button(
+                        onClick = {
+                            onUserEvent(DriverUserEvent.ClearError)
+                        })
+                    {
+                        Text(text = stringResource(id = R.string.clear_error_button))
+                    }
+                }
+            }
+            item {
+                Spacer(modifier = Modifier.height(5.0.dp))
                 Text(text = "Build Config Type: ${BuildConfig.BUILD_TYPE_STRING}")
             }
             item {
@@ -271,17 +290,18 @@ fun RouteRoute(
 
     RouteScreen(
         screenTitle = screenTitle,
-        onBack = onBack,
         driverState = driverState,
-
+        onUserEvent = driveViewModel::onDriverUserEvent,
+        onBack = onBack,
     )
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RouteScreen(
     screenTitle: Int,
-    onBack: () -> Unit,
     driverState: DriverState,
+    onUserEvent: (DriverUserEvent) -> Unit,
+    onBack: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -307,6 +327,25 @@ fun RouteScreen(
         ) {
             item {
                 Spacer(modifier = Modifier.height(95.0.dp))
+                if (driverState.errors.isNotEmpty()) {
+                    Text(
+                        text = driverState.errors,
+                        fontSize = 20.sp,
+                        modifier = Modifier,
+                        fontStyle = FontStyle.Italic,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Button(
+                        onClick = {
+                            onUserEvent(DriverUserEvent.ClearError)
+                        })
+                    {
+                        Text(text = stringResource(id = R.string.clear_error_button))
+                    }
+                }
+            }
+            item {
+                Spacer(modifier = Modifier.height(5.0.dp))
                 Text(
                     modifier = Modifier,
                     text = stringResource(R.string.route_picked),

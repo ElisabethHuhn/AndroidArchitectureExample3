@@ -9,6 +9,7 @@
     <string name="route_button">Return to Driver Screen</string>
     <string name="print_button">Print out list of drivers</string>
     <string name="delete_button">Force remote fetch of Drivers and Routes</string>
+    <string name="clear_error_button">Clear Error</string>
     <string name="is_sorted_label">Select FAB to toggle sort:</string>
     <string name="is_sorted">List isSorted flag = %1s</string>
     <string name="nav_instructions">Select any driver</string>
