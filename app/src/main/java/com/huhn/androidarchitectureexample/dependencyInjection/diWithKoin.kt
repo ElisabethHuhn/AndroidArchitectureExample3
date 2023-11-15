@@ -1,7 +1,7 @@
 package com.huhn.androidarchitectureexample.dependencyInjection
 
 import com.huhn.androidarchitectureexample.repository.DriverRepositoryImpl
-import com.huhn.androidarchitectureexample.viewmodel.DriverViewModelImpl
+import com.huhn.androidarchitectureexample.viewmodel.DriverViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -16,5 +16,5 @@ import org.koin.dsl.module
 //Note the use of Constructor DSL rather than the older single<>{  } syntax
 val koinModule = module {
     singleOf(::DriverRepositoryImpl)
-    viewModelOf(::DriverViewModelImpl)
+    viewModelOf(::DriverViewModel)
 }

@@ -37,7 +37,7 @@ import com.huhn.androidarchitectureexample.BuildConfig
 import com.huhn.androidarchitectureexample.R
 import com.huhn.androidarchitectureexample.viewmodel.DriverState
 import com.huhn.androidarchitectureexample.viewmodel.DriverUserEvent
-import com.huhn.androidarchitectureexample.viewmodel.DriverViewModelImpl
+import com.huhn.androidarchitectureexample.viewmodel.DriverViewModel
 
 /*
  * A ScreenDestination keeps together all the information needed
@@ -68,7 +68,7 @@ object RouteDestination : ScreenDestination {
 @ExperimentalMaterial3Api
 @Composable
 fun MainNavGraph(
-    driverViewModel: DriverViewModelImpl,
+    driverViewModel: DriverViewModel,
     navController: NavHostController = rememberNavController()
 ){
     NavHost(
@@ -109,7 +109,7 @@ fun NavController.navigateToRouteRoute(navOptions: NavOptions? = null){
 fun DriverRoute(
     screenTitle: Int,
     onNavigateToRoute: () -> Unit,
-    driveViewModel: DriverViewModelImpl,
+    driveViewModel: DriverViewModel,
 ){
     val driverState by driveViewModel.driverState.collectAsStateWithLifecycle()
 
@@ -265,7 +265,7 @@ fun DriverScreen(
 fun RouteRoute(
     screenTitle: Int,
     onBack: () -> Unit,
-    driveViewModel: DriverViewModelImpl,
+    driveViewModel: DriverViewModel,
 ){
     val driverState by driveViewModel.driverState.collectAsStateWithLifecycle()
 

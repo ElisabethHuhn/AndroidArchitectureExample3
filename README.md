@@ -93,6 +93,8 @@ MVI allows for a greater separation of concerns, and thus an easier isolation of
     * UI properly reflects state
     * Automate UI test scenarios
 
+# Structured Concurrency Hierarchy
+![DataSourceExceptions.jpg](DataSourceExceptions.jpg)
 
 # Near Exhaustive list of Testing Types
 * Functional - Does it do what the requirements say it should do

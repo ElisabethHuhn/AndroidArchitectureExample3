@@ -10,18 +10,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-// TODO: Figure out how to do this using Koin
-//interface DriverViewModel {
-//    var drivers: MutableLiveData<List<Driver>>
-//    var routes: MutableLiveData<List<Route>>
-//
-//    fun getDrivers()
-//}
-
-class DriverViewModelImpl(private val repo : DriverRepositoryImpl) : ViewModel()
+class DriverViewModel(private val repo : DriverRepositoryImpl) : ViewModel()
 {
     private val _driverState = MutableStateFlow(DriverState())
-    val driverState = _driverState.asStateFlow()
+    var driverState = _driverState.asStateFlow()
 
     fun onDriverUserEvent(event: DriverUserEvent) {
         when (event) {
@@ -33,7 +25,6 @@ class DriverViewModelImpl(private val repo : DriverRepositoryImpl) : ViewModel()
             is DriverUserEvent.DeleteDriversRoutes -> deleteDriversRoutes()
         }
     }
-
 
     //region state update functions
     private fun toggleIsSorted() {
@@ -76,7 +67,10 @@ class DriverViewModelImpl(private val repo : DriverRepositoryImpl) : ViewModel()
     private fun getDrivers()  {
         val isSortedFlag = _driverState.value.isSorted
         viewModelScope.launch {
-            val driverResponse = repo.fetchDriverLists(isSorted = isSortedFlag)
+            val driverResponse = repo.fetchDriverLists(
+                isSorted = isSortedFlag,
+                viewModelScope
+            )
             //now update the state with the lists
             onDriverListChanged(drivers = driverResponse.drivers)
             onRouteListChanged(routes = driverResponse.routes)
@@ -94,7 +88,9 @@ class DriverViewModelImpl(private val repo : DriverRepositoryImpl) : ViewModel()
         }
     }
     private fun deleteDriver(driver: Driver) {
-        repo.deleteDriverLocal(driver = driver)
+        viewModelScope.launch {
+            repo.deleteDriverLocal(driver = driver)
+        }
     }
 
     private fun deleteRoutes(){
@@ -104,7 +100,9 @@ class DriverViewModelImpl(private val repo : DriverRepositoryImpl) : ViewModel()
     }
 
     private fun deleteRoute(route: Route) {
-        repo.deleteRouteLocal(route = route)
+        viewModelScope.launch {
+            repo.deleteRouteLocal(route = route)
+        }
     }
 
     private fun printDrivers() {

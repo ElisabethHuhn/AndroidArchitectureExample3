@@ -12,12 +12,11 @@ import com.huhn.androidarchitectureexample.repository.remoteDataSource.networkMo
 import com.huhn.androidarchitectureexample.repository.remoteDataSource.networkModel.DriverResponse
 import com.huhn.androidarchitectureexample.repository.remoteDataSource.networkModel.Route
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 
 interface DriverRepository {
-    suspend fun fetchDriverLists(isSorted: Boolean) : DriverResponse
+    suspend fun fetchDriverLists(isSorted: Boolean, scope: CoroutineScope) : DriverResponse
 }
 
 
@@ -45,25 +44,33 @@ class DriverRepositoryImpl : DriverRepository {
 
      override suspend fun fetchDriverLists(
          isSorted: Boolean,
+         scope: CoroutineScope
      ) : DriverResponse {
-         var returnLists = getDriversAndRoutesLocal(isSorted = isSorted)
+         var returnLists = getDriversAndRoutesLocal(
+             isSorted = isSorted,
+             dbScope = scope
+             )
 
          if (returnLists.drivers.isEmpty() || returnLists.routes.isEmpty()) {
-            returnLists = getDriversRemote(isSorted = isSorted)
+            returnLists = getDriversRemote(
+                isSorted = isSorted,
+                dbScope = scope
+                )
          }
 
          return returnLists
      }
 
-    private suspend fun getDriversAndRoutesLocal(isSorted: Boolean): DriverResponse
-    {
+    private suspend fun getDriversAndRoutesLocal(
+        isSorted: Boolean,
+        dbScope: CoroutineScope
+    ): DriverResponse {
         var driversList : List<Driver> = listOf()
         var routesList : List<Route> = listOf()
 
         //insert the drivers and routes into the local DB in parallel
         //so we need new coroutines for both
 
-        val dbScope = CoroutineScope(Dispatchers.IO)
         val driverJob = dbScope.launch {
             //insert the list of drivers into the local DB
             //read the list of drivers back from the local DB
@@ -115,28 +122,32 @@ class DriverRepositoryImpl : DriverRepository {
         return routes
     }
 
-    private suspend fun getDriversRemote(isSorted: Boolean) : DriverResponse {
+    private suspend fun getDriversRemote(isSorted: Boolean, dbScope: CoroutineScope) : DriverResponse {
         //perform these actions serially, so make serial fcn calls
 
         //Get the drivers and routes from the remote network call
         var driversResponse = RetrofitHelper.driverApi.fetchDriverResponse()
 
         //then update the local DB with them
-        insertDriversAndRoutesIntoDb(driverResponse = driversResponse)
-        driversResponse = getDriversAndRoutesLocal(isSorted = isSorted)
+        insertDriversAndRoutesIntoDb(
+            driverResponse = driversResponse,
+            dbScope = dbScope
+        )
+        driversResponse = getDriversAndRoutesLocal(
+            isSorted = isSorted,
+            dbScope = dbScope
+        )
 
         return driversResponse
     }
 
-
-
     private suspend fun insertDriversAndRoutesIntoDb(
-        driverResponse: DriverResponse
+        driverResponse: DriverResponse,
+        dbScope: CoroutineScope
     ) {
         //insert the drivers and routes into the local DB in parallel
         //so need to launch new coroutines
 
-        val dbScope = CoroutineScope(Dispatchers.IO)
         val driverJob = dbScope.launch {
             //insert the list of drivers into the local DB
             insertDriver(driverResponse)
@@ -172,30 +183,24 @@ class DriverRepositoryImpl : DriverRepository {
     }
 
 
-    fun deleteDriverLocal(driver: Driver)  {
+    suspend fun deleteDriverLocal(driver: Driver)  {
         val dbDriver =  DBDriver(
             uid = driver.id.toInt(),
             name = driver.name
         )
         dbDriver.let {
-            val scope = CoroutineScope(Dispatchers.IO)
-            scope.launch {
-                dbDriverDao.deleteDriver(dbDriver)
-            }
+            dbDriverDao.deleteDriver(dbDriver)
         }
     }
 
-    fun deleteRouteLocal(route: Route)  {
+    suspend fun deleteRouteLocal(route: Route)  {
         val dbRoute =  DBRoute(
             uid = route.id,
             name = route.name,
             type = route.type
         )
         dbRoute.let {
-            val scope = CoroutineScope(Dispatchers.IO)
-            scope.launch {
-                dbRouteDao.deleteRoute(dbRoute)
-            }
+            dbRouteDao.deleteRoute(dbRoute)
         }
     }
 
