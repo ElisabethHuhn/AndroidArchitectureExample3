@@ -69,7 +69,7 @@ And the experience has taught me that MVI is clearly superior.
 One file, ScreenContract.kt, tells you everything you need to know to unit test the corresponding Screen.
 Testing the UI, ViewModel, Repository and local/remote data sources is straightforward, and obvious from the Architecture.
 
-## Testing
+# Automated Testing
 Writing and maintaining automated testing is clearly costly.
 But the potential for payback ROI is obvious.
 Regression testing is performed consistently and repeatedly.
@@ -81,7 +81,7 @@ and this savings more than covers the cost of creating and maintaining automated
 MVI allows for a greater separation of concerns over MVVM, and thus an easier isolation of code, leading to higher quality testing.
 MVI allows for the tracking of user event occurrence resulting in UI state change.
 
-## ViewModel
+## ViewModel Testing Strategy
 The only things publicly visible from the ViewModel are:
 * Screen State
 * onUserEvent() function, which takes a UserEvent and updates the ScreenState accordingly
@@ -91,23 +91,63 @@ The only things publicly visible from the ViewModel are:
 
 Thus the ViewModel can be tested by initializing a state value, simulating a user event, and making assertions about the final state
 
-## Repository
+## Repository Testing Strategy
 The only things publicly visible from the Repository are:
 * Fetch lists of Drivers and Routes
   * Initial fetch is from the local DB
   * If the local DB is empty, then fetch from the remote API
-* Delete all Drivers from the local DB
-* Delete all Routes from the local DB
+* Delete all Drivers and Routes from the local DB
 
-# Testing Strategy
+So the Repository can be tested by initializing the local DB (both empty and with known values), 
+then fetching the lists of Drivers and Routes, and making assertions about the final state.
 
-ViewModel testing:
-Test the ViewModel independently from the UI or the Repository. So set up testing of each non-private property or function in the ViewModel. 
+## UI Testing Strategy
+Once the ViewModel and Repository are tested, the UI testing can be simply to automate the smoke test of the App. 
+Compose gives us the ability to test that the UI is properly displaying the expected state.
 
-* Unit Tests
-  * Use Contract to unit test that each user event triggers the expected state change
-  * Test Room
-  * Test remote API calls
+**Smoke Test:** 
+
+A smoke test is a quick test to assure that the app is working properly.
+
+Assure Driver Screen displayed properly:
+* Displayed at App launch
+* Title = "State of the Art Architecture Driver Screen"
+* Error line is not displayed
+* Build Config Type = "DEBUG_STRING"
+* Build String Resource = "DEBUG"
+* User instruction = "Select any driver"
+  * Text is italicized and bold
+* Sorted indicator is displayed and = false
+* Buttons visible:
+  * Print
+  * Delete lists
+  * Force API call
+* User Instruction = "Select FAB to toggle sort:"
+* FAB is displayed on lower right corner with text "Sort"
+
+Assure Driver Screen Behaves Properly:
+* Click on FAB
+  * Sorted indicator = true
+  * Drivers are sorted by last name
+* Click on Print button
+  * Check CatLog for expected output of driver list
+* Click on Delete Drivers button
+  * Assure driver list disappears
+  * "No Drivers Available" is displayed
+    * Bold, italicized, and red
+  * Sorted indicator = false
+* Click on Force Remote Fetch Button
+  * Driver list appears
+* Click on a driver
+  * app navigates to Route Screen
+* (More to come about errors)
+
+
+Assure Route Screen displayed properly:
+* More to come
+
+Assure Route Screen Behaves Properly:
+More To Come
 
 # Punch List of things to do and bugs to fix
 * Figure out best way to test MVI

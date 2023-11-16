@@ -16,6 +16,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -130,8 +132,12 @@ fun DriverScreen(
     onUserEvent: (DriverUserEvent) -> Unit,
     onNavigateToRoute: () -> Unit,
 ) {
-    //actually make the API call
-    onUserEvent(DriverUserEvent.GetDrivers)
+    //actually make the API call to get the list of drivers
+    val firstTimeFlag = remember { mutableStateOf(true) }
+    if (firstTimeFlag.value) {
+        firstTimeFlag.value = false
+        onUserEvent(DriverUserEvent.GetDrivers)
+    }
 
     Scaffold(
         topBar = {

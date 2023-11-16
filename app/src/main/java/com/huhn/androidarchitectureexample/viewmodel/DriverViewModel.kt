@@ -106,7 +106,7 @@ class DriverViewModel(
         }
 
         onDriverListChanged(listOf())
-        onDriverUserEvent(DriverUserEvent.GetDrivers)
+//        onDriverUserEvent(DriverUserEvent.GetDrivers)
     }
 
     private fun printDrivers() {
