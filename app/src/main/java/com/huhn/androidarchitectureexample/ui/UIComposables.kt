@@ -274,12 +274,26 @@ fun DriverScreen(
 
                         //reset is sorted
                         onUserEvent(DriverUserEvent.ResetIsSorted)
+                    })
+                {
+                    Text(text = stringResource(id = R.string.delete_button))
+                }
+            }
+
+            item {
+                Button(
+                    onClick = {
+                        //Delete All Drivers and Routes
+                        onUserEvent(DriverUserEvent.DeleteDriversRoutes)
+
+                        //reset is sorted
+                        onUserEvent(DriverUserEvent.ResetIsSorted)
 
                        //read in new driver list
                         onUserEvent(DriverUserEvent.GetDrivers)
                     })
                 {
-                    Text(text = stringResource(id = R.string.delete_button))
+                    Text(text = stringResource(id = R.string.reload_button))
                 }
             }
             item {

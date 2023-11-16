@@ -37,4 +37,7 @@ interface DBDriverDao {
 
     @Delete
     suspend fun deleteDriver(dbDriver: DBDriver)
+
+    @Query("DELETE FROM DBDriver")
+    suspend fun deleteAll()
 }

@@ -25,7 +25,7 @@ class DriverViewModel(
             is DriverUserEvent.GetDrivers -> getDrivers()
             is DriverUserEvent.SaveDriver -> onSaveDriverChanged(event.driver)
             is DriverUserEvent.PrintDrivers -> printDrivers()
-            is DriverUserEvent.DeleteDriversRoutes -> deleteDriversRoutes()
+            is DriverUserEvent.DeleteDriversRoutes -> deleteAllDriversRoutesLocal()
             is DriverUserEvent.ClearError -> onClearError()
         }
     }
@@ -100,33 +100,13 @@ class DriverViewModel(
         }
     }
 
-    private fun deleteDriversRoutes () {
-        deleteDrivers()
-        deleteRoutes()
+    private fun deleteAllDriversRoutesLocal () {
+        viewModelScope.launch {
+            repository.deleteAllDriversAndRoutesLocal()
+        }
+
         onDriverListChanged(listOf())
         onDriverUserEvent(DriverUserEvent.GetDrivers)
-    }
-    private fun deleteDrivers () {
-        _driverState.value.drivers?.forEach { driver ->
-            deleteDriver(driver)
-        }
-    }
-    private fun deleteDriver(driver: Driver) {
-        viewModelScope.launch {
-            repository.deleteDriverLocal(driver = driver)
-        }
-    }
-
-    private fun deleteRoutes(){
-        _driverState.value.routes?.forEach { route ->
-            deleteRoute(route)
-        }
-    }
-
-    private fun deleteRoute(route: Route) {
-        viewModelScope.launch {
-            repository.deleteRouteLocal(route = route)
-        }
     }
 
     private fun printDrivers() {

@@ -158,25 +158,8 @@ class DriverRepositoryImpl  (
         dbRouteDao.insertAllRoutes(*dbRoutesList.toTypedArray())
     }
 
-
-    override suspend fun deleteDriverLocal(driver: Driver)  {
-        val dbDriver =  DBDriver(
-            uid = driver.id.toInt(),
-            name = driver.name
-        )
-        dbDriver.let {
-            dbDriverDao.deleteDriver(dbDriver)
-        }
-    }
-
-    override suspend fun deleteRouteLocal(route: Route)  {
-        val dbRoute =  DBRoute(
-            uid = route.id,
-            name = route.name,
-            type = route.type
-        )
-        dbRoute.let {
-            dbRouteDao.deleteRoute(dbRoute)
-        }
+    override suspend fun deleteAllDriversAndRoutesLocal()  {
+        dbDriverDao.deleteAll()
+        dbRouteDao.deleteAll()
     }
 }

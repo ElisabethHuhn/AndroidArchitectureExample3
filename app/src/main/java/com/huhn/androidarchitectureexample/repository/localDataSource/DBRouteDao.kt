@@ -25,4 +25,7 @@ interface DBRouteDao {
 
     @Delete
     suspend fun deleteRoute(dbRoute: DBRoute)
+
+    @Query("DELETE FROM DBRoute")
+    suspend fun deleteAll()
 }

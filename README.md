@@ -62,12 +62,52 @@ Route Screen
 * LiveData
   * Actually, Id like to make the argument that flows should replace LiveData
 
-# Architecture Discussion
-I initially wrote this app with an MVVM architecture, as that was the direct requirement. But as I learned more about MVI I rewrote it. And the experience has taught me that MVI is clearly superior. One file, ScreenContract.kt, tells you everything you need to know to unit test the Screen.
+# Architecture and its Effects on Testing
+I initially wrote this app with an MVVM architecture, 
+as that was the direct requirement. But as I learned more about MVI I rewrote the app. 
+And the experience has taught me that MVI is clearly superior. 
+One file, ScreenContract.kt, tells you everything you need to know to unit test the corresponding Screen.
+Testing the UI, ViewModel, Repository and local/remote data sources is straightforward, and obvious from the Architecture.
 
-Writing and maintaining automated testing is clearly costly. But the potential for payback ROI is obvious. Regression testing is performed consistently and repeatedly. The earlier you find a bug, the cheaper it is to fix. Thus, a bug found by a developer is cheaper than that same bug found in QA. Automated testing finds bugs earlier in the process, and this savings more than covers the cost of creating and maintaining automated testing.
+## Testing
+Writing and maintaining automated testing is clearly costly.
+But the potential for payback ROI is obvious.
+Regression testing is performed consistently and repeatedly.
+The earlier you find a bug, the cheaper it is to fix.
+Thus, a bug found by a developer is cheaper than that same bug found in QA.
+Automated testing finds bugs earlier in the process,
+and this savings more than covers the cost of creating and maintaining automated testing.
 
-MVI allows for a greater separation of concerns, and thus an easier isolation of code, leading to higher quality testing. MVI allows for the tracking of user event occurrence resulting in UI state change.  
+MVI allows for a greater separation of concerns over MVVM, and thus an easier isolation of code, leading to higher quality testing.
+MVI allows for the tracking of user event occurrence resulting in UI state change.
+
+## ViewModel
+The only things publicly visible from the ViewModel are:
+* Screen State
+* onUserEvent() function, which takes a UserEvent and updates the ScreenState accordingly
+* Any user action functions that are exposed on the UI. 
+  * These include lambdas that must be passed on, 
+  * such as actions passed to GoogleMaps when a marker is selected, etc.
+
+Thus the ViewModel can be tested by initializing a state value, simulating a user event, and making assertions about the final state
+
+## Repository
+The only things publicly visible from the Repository are:
+* Fetch lists of Drivers and Routes
+  * Initial fetch is from the local DB
+  * If the local DB is empty, then fetch from the remote API
+* Delete all Drivers from the local DB
+* Delete all Routes from the local DB
+
+# Testing Strategy
+
+ViewModel testing:
+Test the ViewModel independently from the UI or the Repository. So set up testing of each non-private property or function in the ViewModel. 
+
+* Unit Tests
+  * Use Contract to unit test that each user event triggers the expected state change
+  * Test Room
+  * Test remote API calls
 
 # Punch List of things to do and bugs to fix
 * Figure out best way to test MVI
@@ -82,7 +122,6 @@ MVI allows for a greater separation of concerns, and thus an easier isolation of
 * Fill out the sections of this README document
 
 # Next Steps
-* Assure exception handling for coroutine loading of data sources
 * Assure coroutine cancellation behaves properly
 * Automated Testing driven by MVI architecture.
   * Unit Tests
