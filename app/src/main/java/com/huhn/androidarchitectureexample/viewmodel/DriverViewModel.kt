@@ -11,13 +11,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class DriverViewModel() : ViewModel()
+class DriverViewModel(
+    private val repository: DriverRepositoryImpl
+) : ViewModel()
 {
-    private var repo : DriverRepositoryImpl
-
-    init {
-        repo = DriverRepositoryImpl()
-    }
     private val _driverState = MutableStateFlow(DriverState())
     var driverState = _driverState.asStateFlow()
 
@@ -69,7 +66,7 @@ class DriverViewModel() : ViewModel()
 
     private fun onClearError(){
         _driverState.update {
-            it.copy(errors = "driver")
+            it.copy(errors = "")
         }
     }
 
@@ -77,7 +74,7 @@ class DriverViewModel() : ViewModel()
 
     //region actions in response to user event triggers. See onUserEvent() above
 
-    val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         _driverState.update {
             it.copy(errors = throwable.message ?: "CoroutineExceptionHandler : Error loading drivers and routes")
         }
@@ -87,7 +84,7 @@ class DriverViewModel() : ViewModel()
         val isSortedFlag = _driverState.value.isSorted
         viewModelScope.launch(exceptionHandler) {
             try {
-                val driverResponse = repo.fetchDriverLists(
+                val driverResponse = repository.fetchDriversAndRoutes(
                     isSorted = isSortedFlag,
                     viewModelScope
                 )
@@ -100,7 +97,6 @@ class DriverViewModel() : ViewModel()
                     it.copy(errors = e.message ?: "Try/Catch: Error loading drivers and routes")
                 }
             }
-
         }
     }
 
@@ -116,7 +112,7 @@ class DriverViewModel() : ViewModel()
     }
     private fun deleteDriver(driver: Driver) {
         viewModelScope.launch {
-            repo.deleteDriverLocal(driver = driver)
+            repository.deleteDriverLocal(driver = driver)
         }
     }
 
@@ -128,7 +124,7 @@ class DriverViewModel() : ViewModel()
 
     private fun deleteRoute(route: Route) {
         viewModelScope.launch {
-            repo.deleteRouteLocal(route = route)
+            repository.deleteRouteLocal(route = route)
         }
     }
 

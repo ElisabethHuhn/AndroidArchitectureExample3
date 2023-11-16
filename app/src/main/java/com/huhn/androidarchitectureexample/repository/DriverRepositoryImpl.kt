@@ -1,13 +1,10 @@
 package com.huhn.androidarchitectureexample.repository
 
-import com.huhn.androidarchitectureexample.application.AndroidArchitectureExampleApplication
-import com.huhn.androidarchitectureexample.repository.localDataSource.AppDatabase
 import com.huhn.androidarchitectureexample.repository.localDataSource.DBDriverDao
 import com.huhn.androidarchitectureexample.repository.localDataSource.DBRouteDao
 import com.huhn.androidarchitectureexample.repository.localDataSource.dbModel.DBDriver
 import com.huhn.androidarchitectureexample.repository.localDataSource.dbModel.DBRoute
 import com.huhn.androidarchitectureexample.repository.remoteDataSource.DriverApiService
-import com.huhn.androidarchitectureexample.repository.remoteDataSource.RetrofitHelper
 import com.huhn.androidarchitectureexample.repository.remoteDataSource.networkModel.Driver
 import com.huhn.androidarchitectureexample.repository.remoteDataSource.networkModel.DriverResponse
 import com.huhn.androidarchitectureexample.repository.remoteDataSource.networkModel.Route
@@ -15,31 +12,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 
-//interface DriverRepository (
-//    val db: AppDatabase = AndroidArchitectureExampleApplication.roomDb,
-//    val driverApiService: DriverApiService = RetrofitHelper.driverApi
-//){
-//    suspend fun fetchDriverLists(isSorted: Boolean, scope: CoroutineScope) : DriverResponse
-//}
 
-
-class DriverRepositoryImpl ( //): DriverRepository (
-    val roomDb: AppDatabase = AndroidArchitectureExampleApplication.roomDb,
-    val driverApiService: DriverApiService = RetrofitHelper.driverApi
-) {
-    //local data source variables
-    private var dbDriverDao: DBDriverDao
-    private var dbRouteDao: DBRouteDao
-
-    init {
-        /*
-         * Create the DAOs corresponding to the db tables
-         */
-        dbDriverDao = roomDb.dbDriverDao()
-        dbRouteDao = roomDb.dbRouteDao()
-    }
-
-    suspend fun fetchDriverLists(
+class DriverRepositoryImpl  (
+    private val dbDriverDao: DBDriverDao ,
+    private val dbRouteDao: DBRouteDao ,
+    private val driverApiService: DriverApiService
+) : DriverRepository {
+    override suspend fun fetchDriversAndRoutes(
          isSorted: Boolean,
          scope: CoroutineScope
      ) : DriverResponse {
@@ -49,7 +28,7 @@ class DriverRepositoryImpl ( //): DriverRepository (
              )
 
          if (returnLists.drivers.isEmpty() || returnLists.routes.isEmpty()) {
-            returnLists = getDriversRemote(
+            returnLists = getDriversAndRoutesRemote(
                 isSorted = isSorted,
                 dbScope = scope
                 )
@@ -119,7 +98,7 @@ class DriverRepositoryImpl ( //): DriverRepository (
         return routes
     }
 
-    private suspend fun getDriversRemote(isSorted: Boolean, dbScope: CoroutineScope) : DriverResponse {
+    private suspend fun getDriversAndRoutesRemote(isSorted: Boolean, dbScope: CoroutineScope) : DriverResponse {
         //perform these actions serially, so make serial fcn calls
 
         //Get the drivers and routes from the remote network call
@@ -180,7 +159,7 @@ class DriverRepositoryImpl ( //): DriverRepository (
     }
 
 
-    suspend fun deleteDriverLocal(driver: Driver)  {
+    override suspend fun deleteDriverLocal(driver: Driver)  {
         val dbDriver =  DBDriver(
             uid = driver.id.toInt(),
             name = driver.name
@@ -190,7 +169,7 @@ class DriverRepositoryImpl ( //): DriverRepository (
         }
     }
 
-    suspend fun deleteRouteLocal(route: Route)  {
+    override suspend fun deleteRouteLocal(route: Route)  {
         val dbRoute =  DBRoute(
             uid = route.id,
             name = route.name,
