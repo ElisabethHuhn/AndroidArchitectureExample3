@@ -13,4 +13,5 @@
     <string name="is_sorted_label">Select FAB to toggle sort:</string>
     <string name="is_sorted">List isSorted flag = %1s</string>
     <string name="nav_instructions">Select any driver</string>
+    <string name="no_drivers">No Drivers Available</string>
 </resources>

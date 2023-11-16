@@ -104,6 +104,7 @@ class DriverViewModel(
         deleteDrivers()
         deleteRoutes()
         onDriverListChanged(listOf())
+        onDriverUserEvent(DriverUserEvent.GetDrivers)
     }
     private fun deleteDrivers () {
         _driverState.value.drivers?.forEach { driver ->

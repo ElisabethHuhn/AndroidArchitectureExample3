@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -177,6 +178,7 @@ fun DriverScreen(
                     Button(
                         onClick = {
                             onUserEvent(DriverUserEvent.ClearError)
+                            onUserEvent(DriverUserEvent.DeleteDriversRoutes)
                         })
                     {
                         Text(text = stringResource(id = R.string.clear_error_button))
@@ -205,27 +207,41 @@ fun DriverScreen(
                 Spacer(modifier = Modifier.height(15.0.dp))
             }
             driverState.drivers?.let { drivers ->
-                items(drivers.size) { position ->
-                    val driver = drivers[position]
-                    Row (
-                        modifier = Modifier,
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                if (drivers.isEmpty()) {
+                    item {
                         Text(
-                            modifier = Modifier.clickable {
-                                onUserEvent(DriverUserEvent.SaveDriver(driver))
-                                onNavigateToRoute.invoke()
-                                                          },
-                            text = driver.id
+                            text = stringResource(R.string.no_drivers),
+                            fontSize = 20.sp,
+                            modifier = Modifier,
+                            fontStyle = FontStyle.Italic,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Red
                         )
-                        Text(
-                            modifier = Modifier.clickable {
-                                onUserEvent(DriverUserEvent.SaveDriver(driver))
-                                onNavigateToRoute.invoke()
-                                                          },
-                            text = driver.name
-                        )
+                    }
+                }
+                else {
+                    items(drivers.size) { position ->
+                        val driver = drivers[position]
+                        Row(
+                            modifier = Modifier,
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                modifier = Modifier.clickable {
+                                    onUserEvent(DriverUserEvent.SaveDriver(driver))
+                                    onNavigateToRoute.invoke()
+                                },
+                                text = driver.id
+                            )
+                            Text(
+                                modifier = Modifier.clickable {
+                                    onUserEvent(DriverUserEvent.SaveDriver(driver))
+                                    onNavigateToRoute.invoke()
+                                },
+                                text = driver.name
+                            )
+                        }
                     }
                 }
             }
