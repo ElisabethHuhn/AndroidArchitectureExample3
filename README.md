@@ -91,6 +91,14 @@ The only things publicly visible from the ViewModel are:
 
 Thus the ViewModel can be tested by initializing a state value, simulating a user event, and making assertions about the final state
 
+### ViewModel testing Notes
+* Arrange
+  * Initialize the ViewModel with a fake repository class and a known state
+* Act
+  * Call the onUserEvent() function with the known UserEvent
+* Assert
+  * Make assertions about the final state
+
 ## Repository Testing Strategy
 The only things publicly visible from the Repository are:
 * Fetch lists of Drivers and Routes
@@ -105,7 +113,7 @@ then fetching the lists of Drivers and Routes, and making assertions about the f
 Once the ViewModel and Repository are tested, the UI testing can be simply to automate the smoke test of the App. 
 Compose gives us the ability to test that the UI is properly displaying the expected state.
 
-**Smoke Test:** 
+**Smoke Test Script:** 
 
 A smoke test is a quick test to assure that the app is working properly.
 
@@ -131,6 +139,7 @@ Assure Driver Screen Behaves Properly:
   * Drivers are sorted by last name
 * Click on Print button
   * Check CatLog for expected output of driver list
+  * order is the same as on the screen
 * Click on Delete Drivers button
   * Assure driver list disappears
   * "No Drivers Available" is displayed
@@ -138,16 +147,28 @@ Assure Driver Screen Behaves Properly:
   * Sorted indicator = false
 * Click on Force Remote Fetch Button
   * Driver list appears
+  * Sorted indicator = false
 * Click on a driver
   * app navigates to Route Screen
-* (More to come about errors)
+* Turn off WiFi and Mobile Data on computer
+  * Click on Force Remote Fetch Button
+    * Wait for timeout
+    * Error message is displayed
+* Turn on WiFi and Mobile Data on computer
+  * Click on Force Remote Fetch Button
+    * Driver list appears
+    * Sorted indicator = false
 
 
 Assure Route Screen displayed properly:
-* More to come
+* Title = "State of the Art Architecture Route Screen"
+* You Selected has correct name
+* List of routes title and list displayed
+* Return to driver screen Button visible
 
 Assure Route Screen Behaves Properly:
-More To Come
+* Click on Return to Driver Screen Button
+  * App navigates to Driver Screen
 
 # Punch List of things to do and bugs to fix
 * Figure out best way to test MVI

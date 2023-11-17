@@ -235,14 +235,14 @@ fun DriverScreen(
                         ) {
                             Text(
                                 modifier = Modifier.clickable {
-                                    onUserEvent(DriverUserEvent.SaveDriver(driver))
+                                    onUserEvent(DriverUserEvent.SelectDriver(driver))
                                     onNavigateToRoute.invoke()
                                 },
                                 text = driver.id
                             )
                             Text(
                                 modifier = Modifier.clickable {
-                                    onUserEvent(DriverUserEvent.SaveDriver(driver))
+                                    onUserEvent(DriverUserEvent.SelectDriver(driver))
                                     onNavigateToRoute.invoke()
                                 },
                                 text = driver.name
@@ -396,8 +396,8 @@ fun RouteScreen(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = driverState.savedDriver?.id ?: "")
-                    Text(text = driverState.savedDriver?.name ?: "")
+                    Text(text = driverState.selectedDriver?.id ?: "")
+                    Text(text = driverState.selectedDriver?.name ?: "")
                 }
             }
             item {
@@ -419,7 +419,10 @@ fun RouteScreen(
                             text = route.id.toString()
                         )
                         Text(
-                            text = route.name
+                            text = " - ${route.name}"
+                        )
+                        Text(
+                            text = " - ${route.type}"
                         )
                     }
                 }

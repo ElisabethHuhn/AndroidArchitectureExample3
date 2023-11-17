@@ -2,7 +2,7 @@ package com.huhn.androidarchitectureexample.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.huhn.androidarchitectureexample.repository.DriverRepositoryImpl
+import com.huhn.androidarchitectureexample.repository.DriverRepository
 import com.huhn.androidarchitectureexample.repository.remoteDataSource.networkModel.Driver
 import com.huhn.androidarchitectureexample.repository.remoteDataSource.networkModel.Route
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class DriverViewModel(
-    private val repository: DriverRepositoryImpl
+    private val repository: DriverRepository
 ) : ViewModel()
 {
     private val _driverState = MutableStateFlow(DriverState())
@@ -23,9 +23,10 @@ class DriverViewModel(
             is DriverUserEvent.ToggleIsSorted -> toggleIsSorted()
             is DriverUserEvent.ResetIsSorted -> resetIsSorted()
             is DriverUserEvent.GetDrivers -> getDrivers()
-            is DriverUserEvent.SaveDriver -> onSaveDriverChanged(event.driver)
+            is DriverUserEvent.SelectDriver -> onSelectedDriverChanged(event.driver)
             is DriverUserEvent.PrintDrivers -> printDrivers()
             is DriverUserEvent.DeleteDriversRoutes -> deleteAllDriversRoutesLocal()
+            is DriverUserEvent.SetError -> onErrorChanged(event.error)
             is DriverUserEvent.ClearError -> onClearError()
         }
     }
@@ -58,9 +59,16 @@ class DriverViewModel(
         }
     }
 
-    private fun onSaveDriverChanged(driver: Driver?){
+    private fun onSelectedDriverChanged(driver: Driver?){
         _driverState.update {
-            it.copy(savedDriver = driver)
+            it.copy(selectedDriver = driver)
+        }
+    }
+
+
+    private fun onErrorChanged(error: String){
+        _driverState.update {
+            it.copy(errors = error)
         }
     }
 
@@ -93,9 +101,7 @@ class DriverViewModel(
                 onRouteListChanged(routes = driverResponse.routes)
             }
             catch (e: Exception) {
-                _driverState.update {
-                    it.copy(errors = e.message ?: "Try/Catch: Error loading drivers and routes")
-                }
+                onErrorChanged(e.message ?: "Try/Catch: Error loading drivers and routes")
             }
         }
     }
@@ -106,7 +112,6 @@ class DriverViewModel(
         }
 
         onDriverListChanged(listOf())
-//        onDriverUserEvent(DriverUserEvent.GetDrivers)
     }
 
     private fun printDrivers() {
