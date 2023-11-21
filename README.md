@@ -45,12 +45,13 @@ Driver Screen:
 * When a particular driver is selected, Route Screen is displayed for that driver
 
 Route Screen
-* List of routes for a given driver depends on business rules. If the driverID:
-  * As yet, the routes are just listed in order of routeID. Some suggested business rules mihgt be:
+* List of routes for a given driver depends on business rules. 
+  * As yet, the routes are just listed in order of routeID. Some suggested business rules might be depending on driverID:
     * is same as routeID => display the route
     * is divisible by 2 => display the first R type route
     * is divisible by 5 => display the second C type route
     * does not meet any of the above rules => display the last I type route
+  * Whether I actually implement any of these business rules is TBD
 
 *Technical Requirements*
 * MVVM architecture
