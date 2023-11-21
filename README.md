@@ -182,23 +182,11 @@ Assure Route Screen Behaves Properly:
   * App navigates to Driver Screen
 
 # Punch List of things to do and bugs to fix
-* Figure out best way to test MVI
+
 * Figure out testing
   * Test UI
-  * Test ViewModel
-  * Test Repository
-    * local data source (ROOM)
-    * remote data source (Retrofit)
-
 * Go through the TODOs and decide whether to address them or not.
-* Fill out the sections of this README document
-
-# Next Steps
 * Assure coroutine cancellation behaves properly
-* Automated Testing driven by MVI architecture.
-  * Use Instrumentation testing to test:
-    * UI properly reflects state
-    * Automate UI test scenarios
 
 # Structured Concurrency Hierarchy
 ![DataSourceExceptions.jpg](DataSourceExceptions.jpg)
