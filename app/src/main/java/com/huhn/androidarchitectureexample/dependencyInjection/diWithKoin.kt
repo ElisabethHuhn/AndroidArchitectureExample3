@@ -20,7 +20,7 @@ import retrofit2.converter.gson.GsonConverterFactory
  */
 
 //Note the use of Constructor DSL rather than the older single<>{  } syntax
-private const val BASE_URL = "https://d49c3a78-a4f2-437d-bf72-569334dea17c.mock.pstmn.io/"
+const val BASE_URL = "https://d49c3a78-a4f2-437d-bf72-569334dea17c.mock.pstmn.io/"
 val koinModule = module {
     single {
         Room.databaseBuilder(

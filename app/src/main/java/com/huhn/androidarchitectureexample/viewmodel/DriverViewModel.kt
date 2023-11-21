@@ -112,6 +112,7 @@ class DriverViewModel(
         }
 
         onDriverListChanged(listOf())
+        onRouteListChanged(listOf())
     }
 
     private fun printDrivers() {

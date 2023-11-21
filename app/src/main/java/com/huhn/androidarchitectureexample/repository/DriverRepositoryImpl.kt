@@ -37,7 +37,7 @@ class DriverRepositoryImpl  (
          return returnLists
      }
 
-    private suspend fun getDriversAndRoutesLocal(
+    override suspend fun getDriversAndRoutesLocal(
         isSorted: Boolean,
         dbScope: CoroutineScope
     ): DriverResponse {
@@ -64,7 +64,7 @@ class DriverRepositoryImpl  (
         return DriverResponse(drivers = driversList, routes = routesList)
     }
 
-    private suspend fun getDriversLocal(isSorted: Boolean) : List<Driver> {
+    override suspend fun getDriversLocal(isSorted: Boolean) : List<Driver> {
         //get the local drivers
         val dbDrivers = if (isSorted) {
             dbDriverDao.sortDriverByAscId()
@@ -83,7 +83,7 @@ class DriverRepositoryImpl  (
         return drivers
     }
 
-    private suspend fun getRoutesLocal() : List<Route> {
+    override suspend fun getRoutesLocal() : List<Route> {
         //perform these actions serially, so make serial fcn calls
         val dbRoutes = dbRouteDao.getAllRoutes()
 
@@ -98,7 +98,10 @@ class DriverRepositoryImpl  (
         return routes
     }
 
-    private suspend fun getDriversAndRoutesRemote(isSorted: Boolean, dbScope: CoroutineScope) : DriverResponse {
+    override suspend fun getDriversAndRoutesRemote(
+        isSorted: Boolean,
+        dbScope: CoroutineScope
+    ) : DriverResponse {
         //perform these actions serially, so make serial fcn calls
 
         //Get the drivers and routes from the remote network call
@@ -117,7 +120,7 @@ class DriverRepositoryImpl  (
         return driversResponse
     }
 
-    private suspend fun insertDriversAndRoutesIntoDb(
+    override suspend fun insertDriversAndRoutesIntoDb(
         driverResponse: DriverResponse,
         dbScope: CoroutineScope
     ) {
@@ -137,7 +140,7 @@ class DriverRepositoryImpl  (
         jobs.joinAll()
     }
 
-    private suspend fun insertDriver(driverResponse: DriverResponse) {
+    override suspend fun insertDriver(driverResponse: DriverResponse) {
         val dbDriverList = driverResponse.drivers.map { dbDriver: Driver ->
             DBDriver(
                 uid = dbDriver.id.toInt(),
@@ -147,7 +150,7 @@ class DriverRepositoryImpl  (
         dbDriverDao.insertAllDrivers(*dbDriverList.toTypedArray())
     }
 
-    private suspend fun insertRoute(driverResponse: DriverResponse) {
+    override suspend fun insertRoute(driverResponse: DriverResponse) {
         val dbRoutesList = driverResponse.routes.map { route: Route ->
             DBRoute(
                 uid = route.id,

@@ -1,9 +1,17 @@
 package com.huhn.androidarchitectureexample.viewmodel
 
+import com.huhn.androidarchitectureexample.ReplaceMainDispatcherRule
+import com.huhn.androidarchitectureexample.TestDriverRepositoryImpl
+import com.huhn.androidarchitectureexample.repository.remoteDataSource.networkModel.Driver
+import com.huhn.androidarchitectureexample.repository.remoteDataSource.networkModel.Route
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import org.junit.Rule
 import org.junit.Test
-
 
 //@get:Rule
 //val testInstantTaskExecutorRule: TestRule = InstantTaskExecutorRule()
@@ -14,16 +22,10 @@ val replaceMainDispatcherRule = ReplaceMainDispatcherRule()
 
 class DriverViewModelTest {
 
-    val repository = TestDriverRepositoryImpl()
-    val driverViewModel = DriverViewModel(repository = repository)
+    private val repository = TestDriverRepositoryImpl()
+    private val driverViewModel = DriverViewModel(repository = repository)
 
     //arrange, act assert
-//    @OptIn(ExperimentalCoroutinesApi::class)
-//    @Before
-//    fun setUp() {
-//        replaceMainDispatcherRule.starting()
-//    }
-
     @Test
     fun test_toggle_isSorted() {
         //arrange
@@ -48,16 +50,29 @@ class DriverViewModelTest {
         assert(expected == driverViewModel.driverState.value.isSorted)
     }
 
-//    @Test
-//    fun test_get_drivers() {
-//        //arrange
-//        val expected = TestDriverRepositoryImpl.defaultDriverResponse()
-//        //act
-//        driverViewModel.onDriverUserEvent(DriverUserEvent.GetDrivers)
-//        //assert
-//        assert(expected.drivers == driverViewModel.driverState.value.drivers)
-//        assert(expected.routes == driverViewModel.driverState.value.routes)
-//    }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun test_get_drivers() = runTest {
+        //arrange
+//        val testScheduler = TestCoroutineScheduler()
+        val testDispatcher = UnconfinedTestDispatcher(testScheduler)
+        Dispatchers.setMain(testDispatcher)
+
+        val expected = TestDriverRepositoryImpl.defaultDriverResponse()
+
+        try {
+            //act
+            driverViewModel.onDriverUserEvent(event = DriverUserEvent.GetDrivers)
+
+            //assert
+            assert(expected.drivers == driverViewModel.driverState.value.drivers)
+            assert(expected.routes == driverViewModel.driverState.value.routes)
+        } finally {
+            Dispatchers.resetMain()
+        }
+    }
+
+
 
     @Test
     fun test_select_driver() {
@@ -79,17 +94,28 @@ class DriverViewModelTest {
         assert(expected)
     }
 
-//    @Test
-//    fun test_delete_drivers_routes() {
-//        //arrange
-//        val expectedDriver = listOf<Driver>()
-//        val expectedRoute = listOf<Route>()
-//        //act
-//        driverViewModel.onDriverUserEvent(DriverUserEvent.DeleteDriversRoutes)
-//        //assert
-//        assert(expectedDriver == driverViewModel.driverState.value.drivers)
-//        assert(expectedRoute == driverViewModel.driverState.value.routes)
-//    }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun test_delete_drivers_routes() = runTest {
+        //arrange
+//        val testScheduler = TestCoroutineScheduler()
+        val testDispatcher = UnconfinedTestDispatcher(testScheduler)
+        Dispatchers.setMain(testDispatcher)
+
+        val expectedDriver = listOf<Driver>()
+        val expectedRoute = listOf<Route>()
+
+        try{
+            //act
+            driverViewModel.onDriverUserEvent(DriverUserEvent.DeleteDriversRoutes)
+
+            //assert
+            assert(expectedDriver == driverViewModel.driverState.value.drivers)
+            assert(expectedRoute == driverViewModel.driverState.value.routes)
+        } finally {
+            Dispatchers.resetMain()
+        }
+    }
 
     @Test
     fun test_set_error() {

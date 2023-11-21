@@ -1,4 +1,4 @@
-package com.huhn.androidarchitectureexample.viewmodel
+package com.huhn.androidarchitectureexample
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,7 +19,7 @@ class ReplaceMainDispatcherRule(
         Dispatchers.setMain(testDispatcher)
     }
 
-    override fun finished(description: Description) {
+    public override fun finished(description: Description) {
         Dispatchers.resetMain()
     }
 }
