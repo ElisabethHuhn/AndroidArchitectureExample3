@@ -191,10 +191,6 @@ Assure Route Screen Behaves Properly:
 # Next Steps
 * Assure coroutine cancellation behaves properly
 * Automated Testing driven by MVI architecture.
-  * Unit Tests
-    * Use Contract to unit test that each user event triggers the expected state change
-    * Test Room
-    * Test remote API calls
   * Use Instrumentation testing to test:
     * UI properly reflects state
     * Automate UI test scenarios
