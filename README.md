@@ -84,6 +84,8 @@ The earlier you find a bug, the cheaper it is to fix.
 Thus, a bug found by a developer is cheaper than that same bug found in QA.
 Automated testing finds bugs earlier in the process,
 and this savings more than covers the cost of creating and maintaining automated testing.
+However even more than that, an architecture that is designed to be testable is also an architecture that is easier to maintain. 
+With a good architecture you can avoid a whole class of bugs entirely.
 
 MVI allows for a greater separation of concerns over MVVM, and thus an easier isolation of code, leading to higher quality testing.
 MVI allows for the tracking of user event occurrence resulting in UI state change.
