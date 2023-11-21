@@ -1,13 +1,13 @@
 package com.huhn.androidarchitectureexample.dependencyInjection
 
 import androidx.room.Room
-import com.huhn.androidarchitectureexample.viewmodel.DriverViewModel
+import com.huhn.androidarchitectureexample.repository.DriverRepository
 import com.huhn.androidarchitectureexample.repository.DriverRepositoryImpl
 import com.huhn.androidarchitectureexample.repository.localDataSource.AppDatabase
 import com.huhn.androidarchitectureexample.repository.remoteDataSource.DriverApiService
+import com.huhn.androidarchitectureexample.viewmodel.DriverViewModel
 import org.koin.android.ext.koin.androidContext
-import org.koin.androidx.viewmodel.dsl.viewModelOf
-import org.koin.core.module.dsl.singleOf
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -42,6 +42,15 @@ val koinModule = module {
             .create(DriverApiService::class.java)
     }
 
-    singleOf(::DriverRepositoryImpl)
-    viewModelOf(::DriverViewModel)
+    single<DriverRepository> {
+       DriverRepositoryImpl(get(), get(), get())
+    }
+
+    viewModel {
+        DriverViewModel(get())
+    }
+
+//
+//    singleOf(::DriverRepositoryImpl)
+//    viewModelOf(::DriverViewModel)
 }

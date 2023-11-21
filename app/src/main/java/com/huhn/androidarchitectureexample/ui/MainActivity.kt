@@ -9,26 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.huhn.androidarchitectureexample.ui.theme.AndroidArchitectureExampleTheme
-import com.huhn.androidarchitectureexample.viewmodel.DriverViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
-    private val driveViewModel: DriverViewModel by viewModel()
-
     @ExperimentalMaterial3Api
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             AndroidArchitectureExampleTheme {
-//                // A surface container using the 'background' color from the theme
-//                Surface(
-//                    modifier = Modifier.fillMaxSize(),
-//                    color = MaterialTheme.colorScheme.background
-//                ) {
-////                    Greeting("Android")
-//                }
-
-                MainNavGraph( driverViewModel = driveViewModel )
+                MainNavGraph( )
             }
         }
     }
