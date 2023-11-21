@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -61,7 +62,9 @@ fun RouteScreen(
                             text = stringResource(screenTitle),
                             textAlign = TextAlign.Center,
                             fontSize = 30.sp,
-                            modifier = Modifier.align(Alignment.Center)
+                            modifier = Modifier
+                                .testTag(tag = "screen_title")
+                                .align(Alignment.Center)
                         )
                     }
                 },
@@ -70,7 +73,9 @@ fun RouteScreen(
     ) { it
 
         LazyColumn(
-            modifier = Modifier.fillMaxWidth(1f),
+            modifier = Modifier
+                .testTag(tag = "route_screen_column")
+                .fillMaxWidth(1f),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -80,11 +85,12 @@ fun RouteScreen(
                     Text(
                         text = driverState.errors,
                         fontSize = 20.sp,
-                        modifier = Modifier,
+                        modifier = Modifier.testTag(tag = "route_errors"),
                         fontStyle = FontStyle.Italic,
                         fontWeight = FontWeight.Bold
                     )
                     Button(
+                        modifier = Modifier.testTag(tag = "clear_error_button"),
                         onClick = {
                             onUserEvent(DriverUserEvent.ClearError)
                         })
@@ -96,7 +102,7 @@ fun RouteScreen(
             item {
                 Spacer(modifier = Modifier.height(5.0.dp))
                 Text(
-                    modifier = Modifier,
+                    modifier = Modifier.testTag(tag = "selected_driver"),
                     text = stringResource(R.string.route_picked),
                     fontSize = 20.sp,
                 )
@@ -105,17 +111,26 @@ fun RouteScreen(
 
                 Spacer(modifier = Modifier.height(5.0.dp))
                 Row (
-                    modifier = Modifier,
+                    modifier = Modifier.testTag(tag = "driver_row"),
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = driverState.selectedDriver?.id ?: "")
-                    Text(text = driverState.selectedDriver?.name ?: "")
+                    Text(
+                        modifier = Modifier.testTag(tag = "driver_id_select"),
+                        text = driverState.selectedDriver?.id ?: ""
+                    )
+                    Text(
+                        modifier = Modifier.testTag(tag = "driver_name_select"),
+                        text = driverState.selectedDriver?.name ?: ""
+                    )
                 }
             }
             item {
                 Spacer(modifier = Modifier.height(5.0.dp))
-                UnderlinedText(textString = stringResource(R.string.route_list))
+                UnderlinedText(
+                    modifier = Modifier.testTag(tag = "list_label"),
+                    textString = stringResource(R.string.route_list)
+                )
 
                 Spacer(modifier = Modifier.height(15.0.dp))
             }
@@ -124,17 +139,20 @@ fun RouteScreen(
                 items(numberOfRoutes) { position ->
                     val route = routes[position]
                     Row (
-                        modifier = Modifier,
+                        modifier = Modifier.testTag(tag = "route_row"),
                         horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
+                            modifier = Modifier.testTag(tag = "route_id"),
                             text = route.id.toString()
                         )
                         Text(
+                            modifier = Modifier.testTag(tag = "route_name"),
                             text = " - ${route.name}"
                         )
                         Text(
+                            modifier = Modifier.testTag(tag = "route_type"),
                             text = " - ${route.type}"
                         )
                     }
@@ -143,6 +161,7 @@ fun RouteScreen(
 
             item {
                 Button(
+                    modifier = Modifier.testTag(tag = "navigate_button"),
                     onClick = {
                         //navigate to Driver Screen
                         onBack.invoke()

@@ -1,4 +1,4 @@
-package com.huhn.androidarchitectureexample.repository
+package com.huhn.androidarchitectureexample
 
 import com.huhn.androidarchitectureexample.repository.remoteDataSource.networkModel.Driver
 import com.huhn.androidarchitectureexample.repository.remoteDataSource.networkModel.DriverResponse

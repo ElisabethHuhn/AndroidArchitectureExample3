@@ -15,4 +15,8 @@
     <string name="is_sorted">List isSorted flag = %1s</string>
     <string name="nav_instructions">Select any driver</string>
     <string name="no_drivers">No Drivers Available</string>
+
+    <string name="test_driver_title">Test Architecture \n Driver Screen</string>
+    <string name="test_route_title">Test Architecture \n Route Screen</string>
+
 </resources>

@@ -120,7 +120,9 @@ then fetching the lists of Drivers and Routes, and making assertions about the f
 
 ## UI Testing Strategy
 Once the ViewModel and Repository are tested, the UI testing can be simply to automate the smoke test of the App. 
-Compose gives us the ability to test that the UI is properly displaying the expected state.
+Compose gives us the ability to test that the UI is properly displaying the expected state. 
+The easiest way to test that an element is on the UI is to assign testTags to the UI elements, 
+then find those testTags in the UI test. Thus, all of the compose elements have testTags assigned to them.
 
 **Smoke Test Script:** 
 

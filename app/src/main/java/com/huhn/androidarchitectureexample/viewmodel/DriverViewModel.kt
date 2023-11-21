@@ -11,11 +11,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class DriverViewModel(
+open class DriverViewModel(
     private val repository: DriverRepository
 ) : ViewModel()
 {
-    private val _driverState = MutableStateFlow(DriverState())
+    protected val _driverState = MutableStateFlow(DriverState())
     var driverState = _driverState.asStateFlow()
 
     fun onDriverUserEvent(event: DriverUserEvent) {
@@ -32,7 +32,7 @@ class DriverViewModel(
     }
 
     //region state update functions
-    private fun toggleIsSorted() {
+    protected open fun toggleIsSorted() {
         var newIsSorted = true
         if (_driverState.value.isSorted) newIsSorted = false
 
@@ -47,13 +47,13 @@ class DriverViewModel(
         }
     }
 
-    private fun onDriverListChanged (drivers: List<Driver>) {
+    protected fun onDriverListChanged (drivers: List<Driver>) {
         _driverState.update {
             it.copy(drivers = drivers)
         }
     }
 
-    private fun onRouteListChanged (routes: List<Route>) {
+    protected fun onRouteListChanged (routes: List<Route>) {
         _driverState.update {
             it.copy(routes = routes)
         }

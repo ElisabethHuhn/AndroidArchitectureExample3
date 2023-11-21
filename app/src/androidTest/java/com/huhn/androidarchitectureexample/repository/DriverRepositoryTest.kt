@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
+import com.huhn.androidarchitectureexample.TestDriverDataImpl
 import com.huhn.androidarchitectureexample.dependencyInjection.BASE_URL
 import com.huhn.androidarchitectureexample.repository.localDataSource.AppDatabase
 import com.huhn.androidarchitectureexample.repository.remoteDataSource.DriverApiService

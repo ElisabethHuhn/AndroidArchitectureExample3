@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -74,10 +75,12 @@ fun DriverScreen(
                 title = {
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Text(
+                            modifier = Modifier
+                                .testTag(tag = "screen_title")
+                                .align(Alignment.Center),
                             text = stringResource(screenTitle),
                             textAlign = TextAlign.Center,
                             fontSize = 30.sp,
-                            modifier = Modifier.align(Alignment.Center)
                         )
                     }
                 },
@@ -85,6 +88,7 @@ fun DriverScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
+                modifier = Modifier.testTag(tag = "sort_button"),
                 content = { Text(text = "Sort") },
                 onClick = {
                     onUserEvent(DriverUserEvent.ToggleIsSorted)
@@ -96,7 +100,9 @@ fun DriverScreen(
     ) { it
         Spacer(modifier = Modifier.height(95.0.dp))
         LazyColumn(
-            modifier = Modifier.fillMaxWidth(1f),
+            modifier = Modifier
+                .testTag(tag = "driver_screen_column")
+                .fillMaxWidth(1f),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -106,11 +112,12 @@ fun DriverScreen(
                     Text(
                         text = driverState.errors,
                         fontSize = 20.sp,
-                        modifier = Modifier,
+                        modifier = Modifier.testTag(tag = "driver_errors"),
                         fontStyle = FontStyle.Italic,
                         fontWeight = FontWeight.Bold
                     )
                     Button(
+                        modifier = Modifier.testTag(tag = "clear_error_button"),
                         onClick = {
                             onUserEvent(DriverUserEvent.ClearError)
                             onUserEvent(DriverUserEvent.DeleteDriversRoutes)
@@ -122,20 +129,26 @@ fun DriverScreen(
             }
             item {
                 Spacer(modifier = Modifier.height(5.0.dp))
-                Text(text = "Build Config Type: ${BuildConfig.BUILD_TYPE_STRING}")
+                Text(
+                    modifier = Modifier.testTag(tag = "build_config_type"),
+                    text = "Build Config Type: ${BuildConfig.BUILD_TYPE_STRING}"
+                )
             }
             item {
                 Spacer(modifier = Modifier.height(5.0.dp))
                 Text(text = "Build Type String Resource =")
-                Text(text = stringResource(id = R.string.build_type_res))
+                Text(
+                    modifier = Modifier.testTag(tag = "build_config_string_resource"),
+                    text = stringResource(id = R.string.build_type_res)
+                )
             }
 
             item {
                 Spacer(modifier = Modifier.height(15.0.dp))
                 Text(
+                    modifier = Modifier.testTag(tag = "select_driver"),
                     text = stringResource(R.string.nav_instructions),
                     fontSize = 20.sp,
-                    modifier = Modifier,
                     fontStyle = FontStyle.Italic,
                     fontWeight = FontWeight.Bold
                 )
@@ -147,7 +160,7 @@ fun DriverScreen(
                         Text(
                             text = stringResource(R.string.no_drivers),
                             fontSize = 20.sp,
-                            modifier = Modifier,
+                            modifier = Modifier.testTag(tag = "no_drivers"),
                             fontStyle = FontStyle.Italic,
                             fontWeight = FontWeight.Bold,
                             color = Color.Red
@@ -158,22 +171,26 @@ fun DriverScreen(
                     items(drivers.size) { position ->
                         val driver = drivers[position]
                         Row(
-                            modifier = Modifier,
+                            modifier = Modifier.testTag(tag = "driver_row"),
                             horizontalArrangement = Arrangement.SpaceEvenly,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                modifier = Modifier.clickable {
-                                    onUserEvent(DriverUserEvent.SelectDriver(driver))
-                                    onNavigateToRoute.invoke()
-                                },
+                                modifier = Modifier
+                                    .testTag(tag = "driver_id_select")
+                                    .clickable {
+                                        onUserEvent(DriverUserEvent.SelectDriver(driver))
+                                        onNavigateToRoute.invoke()
+                                    },
                                 text = driver.id
                             )
                             Text(
-                                modifier = Modifier.clickable {
-                                    onUserEvent(DriverUserEvent.SelectDriver(driver))
-                                    onNavigateToRoute.invoke()
-                                },
+                                modifier = Modifier
+                                    .testTag(tag = "driver_name_select")
+                                    .clickable {
+                                        onUserEvent(DriverUserEvent.SelectDriver(driver))
+                                        onNavigateToRoute.invoke()
+                                    },
                                 text = driver.name
                             )
                         }
@@ -186,12 +203,13 @@ fun DriverScreen(
                 Text(
                     text = stringResource(R.string.is_sorted, driverState.isSorted.toString()),
                     fontSize = 20.sp,
-                    modifier = Modifier,
+                    modifier = Modifier.testTag(tag = "sorted_indicator"),
                     fontWeight = FontWeight.Bold
                 )
             }
             item {
                 Button(
+                    modifier = Modifier.testTag(tag = "print_button"),
                     onClick = {
                         //Print out the list of drivers
                         onUserEvent(DriverUserEvent.PrintDrivers)
@@ -203,6 +221,7 @@ fun DriverScreen(
 
             item {
                 Button(
+                    modifier = Modifier.testTag(tag = "delete_button"),
                     onClick = {
                         //Delete All Drivers and Routes
                         onUserEvent(DriverUserEvent.DeleteDriversRoutes)
@@ -217,6 +236,7 @@ fun DriverScreen(
 
             item {
                 Button(
+                    modifier = Modifier.testTag(tag = "fetch_button"),
                     onClick = {
                         //Delete All Drivers and Routes
                         onUserEvent(DriverUserEvent.DeleteDriversRoutes)
@@ -236,7 +256,7 @@ fun DriverScreen(
                 Text(
                     text = stringResource(id = R.string.is_sorted_label),
                     fontSize = 20.sp,
-                    modifier = Modifier,
+                    modifier = Modifier.testTag(tag = "fab_label"),
                     fontWeight = FontWeight.Bold
                 )
             }
