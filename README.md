@@ -7,19 +7,24 @@ This project is an example of State of the Art Android Architecture circa 2023. 
   * For now, the only classes that are injected are the ViewModel and Repository
 * Compose for building UI
   * Also uses Compose NavGraph navigation
-* MVI to
+* MVI Architecture using ViewModel to:
   * persist UI local cache across orientation changes
-  * business logic to calculate values for UI display
-  * business logic for actions in response to UI events
   * UI state variables governing UI compose
-  * User Events (The I in MVI "intents") to execute actions in response to user triggers
+  * User Events (The I in MVI "intents") to trigger actions in response to user triggers
+    * These actions are the business logic which in turn calculate values for UI display
+    * Some actions perform calculations local to the ViewModel
+    * Other actions require a data source
+      * The data source is the Repository
 * Repository to separate business logic from Data Source
   * Examples of both localDataSource and remoteDataSource
   * localDataSource is ROOM DB
   * remoteDataSource is RetroFit2
-* Use Flows to move lists back to UI compose (via the ViewModel) from Repository
+* Use Flows to move data back to UI compose (via the ViewModel) from Repository
 * Coroutines for both serial and parallel structured concurrency
 * Automated Testing
+  * ViewModel unit tests
+  * Repository integration tests
+  * UI Compose smoke tests
 
 # Requirements
 Build a sample app using State of the Art Architectural components.
@@ -41,10 +46,11 @@ Driver Screen:
 
 Route Screen
 * List of routes for a given driver depends on business rules. If the driverID:
-  * is same as routeID => display the route
-  * is divisible by 2 => display the first R type route
-  * is divisible by 5 => display the second C type route
-  * does not meet any of the above rules => display the last I type route
+  * As yet, the routes are just listed in order of routeID. Some suggested business rules mihgt be:
+    * is same as routeID => display the route
+    * is divisible by 2 => display the first R type route
+    * is divisible by 5 => display the second C type route
+    * does not meet any of the above rules => display the last I type route
 
 *Technical Requirements*
 * MVVM architecture
@@ -197,6 +203,7 @@ Assure Route Screen Behaves Properly:
 ![DataSourceExceptions.jpg](DataSourceExceptions.jpg)
 
 # Near Exhaustive list of Testing Types
+This app only illustrates a few of the many types of testing that can be performed on an app.
 * Functional - Does it do what the requirements say it should do
 * Non-functional - Performance, Capacity, Throughput, Power consumption, network reception
 * Android UI
@@ -217,12 +224,3 @@ Assure Route Screen Behaves Properly:
 * Security Testing
 * Bucket or A/B testing
 
-# Android Tests
-* Unit Tests
-  * JUnit
-  * Robolectric
-  * Mockito
-* Integration Tests
-* UI Tests
-  * Espresso
-  * UI Automator
