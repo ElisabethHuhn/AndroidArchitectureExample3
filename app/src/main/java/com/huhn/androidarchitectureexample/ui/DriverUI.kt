@@ -80,7 +80,7 @@ fun DriverScreen(
                                 .align(Alignment.Center),
                             text = stringResource(screenTitle),
                             textAlign = TextAlign.Center,
-                            fontSize = 30.sp,
+                            fontSize = 20.sp,
                         )
                     }
                 },
@@ -98,7 +98,6 @@ fun DriverScreen(
             )
         }
     ) { it
-        Spacer(modifier = Modifier.height(95.0.dp))
         LazyColumn(
             modifier = Modifier
                 .testTag(tag = "driver_screen_column")
@@ -108,7 +107,9 @@ fun DriverScreen(
         ) {
             item {
                 Spacer(modifier = Modifier.height(95.0.dp))
-                if (driverState.errors.isNotEmpty()) {
+            }
+            if (driverState.errors.isNotEmpty()) {
+                item {
                     Text(
                         text = driverState.errors,
                         fontSize = 20.sp,
@@ -145,11 +146,10 @@ fun DriverScreen(
                     text = stringResource(id = R.string.build_type_res)
                 )
             }
-
             item {
                 Spacer(modifier = Modifier.height(15.0.dp))
                 Text(
-                    modifier = Modifier.testTag(tag = "select_driver"),
+                    modifier = Modifier.testTag(tag = "select_driver_label"),
                     text = stringResource(R.string.select_driver),
                     fontSize = 20.sp,
                     fontStyle = FontStyle.Italic,
@@ -157,50 +157,48 @@ fun DriverScreen(
                 )
                 Spacer(modifier = Modifier.height(15.0.dp))
             }
-            driverState.drivers?.let { drivers ->
-                if (drivers.isEmpty()) {
-                    item {
+            item {
+                if (driverState.drivers.isNullOrEmpty()) {
                         Text(
-                            text = stringResource(R.string.no_drivers),
-                            fontSize = 20.sp,
-                            modifier = Modifier.testTag(tag = "no_drivers"),
-                            fontStyle = FontStyle.Italic,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Red
+                        text = stringResource(R.string.no_drivers),
+                        fontSize = 20.sp,
+                        modifier = Modifier.testTag(tag = "no_drivers"),
+                        fontStyle = FontStyle.Italic,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Red
+                    )
+                }
+            }
+            driverState.drivers?.let {driverList ->
+                items(driverList.size) { position ->
+                    val driver = driverState.drivers[position]
+
+                    Row(
+                        modifier = Modifier.testTag(tag = "driver_row"),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .testTag(tag = "driver_id_select")
+                                .clickable {
+                                    onUserEvent(DriverUserEvent.SelectDriver(driver))
+                                    onNavigateToRoute.invoke()
+                                },
+                            text = driver.id
+                        )
+                        Text(
+                            modifier = Modifier
+                                .testTag(tag = "driver_name_select")
+                                .clickable {
+                                    onUserEvent(DriverUserEvent.SelectDriver(driver = driver))
+                                    onNavigateToRoute.invoke()
+                                },
+                            text = driver.name
                         )
                     }
                 }
-                else {
-                    items(drivers.size) { position ->
-                        val driver = drivers[position]
-                        Row(
-                            modifier = Modifier.testTag(tag = "driver_row"),
-                            horizontalArrangement = Arrangement.SpaceEvenly,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                modifier = Modifier
-                                    .testTag(tag = "driver_id_select")
-                                    .clickable {
-                                        onUserEvent(DriverUserEvent.SelectDriver(driver))
-                                        onNavigateToRoute.invoke()
-                                    },
-                                text = driver.id
-                            )
-                            Text(
-                                modifier = Modifier
-                                    .testTag(tag = "driver_name_select")
-                                    .clickable {
-                                        onUserEvent(DriverUserEvent.SelectDriver(driver))
-                                        onNavigateToRoute.invoke()
-                                    },
-                                text = driver.name
-                            )
-                        }
-                    }
-                }
             }
-
             item {
                 Spacer(modifier = Modifier.height(15.0.dp))
                 Text(
@@ -221,7 +219,6 @@ fun DriverScreen(
                     Text(text = stringResource(id = R.string.print_button))
                 }
             }
-
             item {
                 Button(
                     modifier = Modifier.testTag(tag = "delete_button"),
@@ -236,7 +233,6 @@ fun DriverScreen(
                     Text(text = stringResource(id = R.string.delete_button))
                 }
             }
-
             item {
                 Button(
                     modifier = Modifier.testTag(tag = "reload_button"),
@@ -263,6 +259,7 @@ fun DriverScreen(
                     fontWeight = FontWeight.Bold
                 )
             }
+
         }
     }
 }

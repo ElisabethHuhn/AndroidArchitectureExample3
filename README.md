@@ -1,5 +1,14 @@
 # AndroidArchitectureExample3
 
+# Punch List of things to do and bugs to fix
+* Continue filling out automatic testing
+  * Test UI Display and Behavior for both Driver and Route Screens
+  * Assure that the app behaves properly when the network is down
+* Go through the TODOs and decide whether to address them or not.
+* Assure coroutine cancellation behaves properly
+*
+
+
 # Introduction
 This project is an example of State of the Art Android Architecture circa 2023. It uses:
 * Kotlin 100%
@@ -134,6 +143,11 @@ Compose gives us the ability to test that the UI is properly displaying the expe
 The easiest way to test that an element is on the UI is to assign testTags to the UI elements, 
 then find those testTags in the UI test. Thus, all of the compose elements have testTags assigned to them.
 
+However, it is never easy. Compose seems to duplicate nodes seemingly at random. 
+Well, not at random, but I haven't figured out the pattern yet. 
+It seems to be related to the use of if statements in the LazyColumn to determine whether to display a particular element.
+So relying on the testTag to find the element in the UI test is not a bullet-proof strategy.
+
 **Smoke Test Script:** 
 
 A smoke test is a quick test to assure that the app is working properly.
@@ -190,14 +204,6 @@ Assure Route Screen displayed properly:
 Assure Route Screen Behaves Properly:
 * Click on Return to Driver Screen Button
   * App navigates to Driver Screen
-
-# Punch List of things to do and bugs to fix
-
-* Figure out testing
-  * Test UI
-* Go through the TODOs and decide whether to address them or not.
-* Assure coroutine cancellation behaves properly
-* Assure that the app behaves properly when the network is down
 
 
 # Structured Concurrency Hierarchy

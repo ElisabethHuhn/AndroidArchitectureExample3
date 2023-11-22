@@ -8,6 +8,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.printToLog
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -28,7 +29,6 @@ class TestComposeUI {
     fun testDriveScreenDisplay() {
         // Set up the test environment
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-
 
         // Render the Compose UI
         composeTestRule.setContent {
@@ -76,7 +76,6 @@ class TestComposeUI {
 
         composeTestRule.onNodeWithTag("no_drivers").assertDoesNotExist()
 
-        //at least one driver is displayed
         composeTestRule.onAllNodesWithTag("driver_row").assertCountEquals(6)
         composeTestRule.onAllNodesWithTag("driver_id_select")
             .assertCountEquals(6)
@@ -105,7 +104,84 @@ class TestComposeUI {
             .assertIsDisplayed()
             .assertTextContains(reload_button)
     }
-    fun testDriveScreenBehavior() {
+
+
+    @Test
+    fun testDriveScreenBehaviorFab() {
+        // Set up the test environment
+        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+
+        // Render the Compose UI
+        composeTestRule.setContent {
+            // Call the entry point composable function
+            DriverRoute(
+                screenTitle = R.string.test_driver_title,
+                onNavigateToRoute = {
+                    /* Somehow indicate navigation */
+                },
+                driveViewModel = TestDriverViewModel(TestDriverRepositoryImpl()),
+            )
+        }
+        composeTestRule.waitForIdle()
+
+        var sorted_indicator = appContext.resources.getString(R.string.sorted_indicator, "false")
+        composeTestRule.onNodeWithTag("sorted_indicator")
+            .assertIsDisplayed()
+            .assertTextEquals(sorted_indicator)
+
+        composeTestRule.onNodeWithTag("sort_button")
+            .assertIsDisplayed()
+            .performClick()
+
+        composeTestRule.waitForIdle()
+
+        sorted_indicator = appContext.resources.getString(R.string.sorted_indicator, "true")
+        composeTestRule.onNodeWithTag("sorted_indicator")
+            .assertIsDisplayed()
+            .assertTextEquals(sorted_indicator)
+
+        composeTestRule.onNodeWithTag("sort_button")
+            .assertIsDisplayed()
+            .performClick()
+
+        composeTestRule.waitForIdle()
+
+        sorted_indicator = appContext.resources.getString(R.string.sorted_indicator, "false")
+        composeTestRule.onNodeWithTag("sorted_indicator")
+            .assertIsDisplayed()
+            .assertTextEquals(sorted_indicator)
+    }
+
+    @Test
+    fun testDriveScreenBehaviorPrint() {
+        // Set up the test environment
+        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+
+        // Render the Compose UI
+        composeTestRule.setContent {
+            // Call the entry point composable function
+            DriverRoute(
+                screenTitle = R.string.test_driver_title,
+                onNavigateToRoute = {
+                    /* Somehow indicate navigation */
+                },
+                driveViewModel = TestDriverViewModel(TestDriverRepositoryImpl()),
+            )
+        }
+        composeTestRule.waitForIdle()
+
+        //at least one driver is displayed
+        composeTestRule.onAllNodesWithTag("driver_row").assertCountEquals(6)
+
+        val print_button = appContext.resources.getString(R.string.print_button)
+        composeTestRule.onNodeWithTag("print_button")
+            .assertIsDisplayed()
+            .assertTextEquals(print_button)
+            .performClick()
+    }
+
+    @Test
+    fun testDriveScreenBehaviorDelete() {
         // Set up the test environment
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 
@@ -121,13 +197,36 @@ class TestComposeUI {
                 driveViewModel = TestDriverViewModel(TestDriverRepositoryImpl()),
             )
         }
+        composeTestRule.waitForIdle()
+        composeTestRule.onRoot().printToLog("TAG")
 
-//        // Interact with the UI and trigger user actions
-//        composeTestRule.onNodeWithText("Force remote fetch of Drivers and Routes").performClick()
-//
-//        // Assert the expected UI states or behaviors
-//        composeTestRule.onNodeWithText("Clicked!").assertIsDisplayed()
+        val sortedLabel = composeTestRule.onNodeWithTag("sorted_indicator")
+            .assertIsDisplayed()
+
+
+        composeTestRule.onAllNodesWithTag("driver_row").assertCountEquals(6)
+
+        val delete_button = appContext.resources.getString(R.string.delete_button)
+        composeTestRule.onNodeWithTag("delete_button")
+            .assertIsDisplayed()
+            .assertTextEquals(delete_button)
+            .performClick()
+
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithTag("no_drivers")
+            .assertExists()
+            .assertIsDisplayed()
+
+        composeTestRule.onRoot().printToLog("TAG")
+
+        //once there,always there
+//        composeTestRule.onAllNodesWithTag("driver_row").assertAll(isNotEnabled())
+
+//        val sorted_indicator = appContext.resources.getString(R.string.sorted_indicator, "false")
+//        composeTestRule.onNodeWithTag("sorted_indicator")
+//            .assertIsDisplayed()
+//            .assertTextEquals(sorted_indicator)
     }
-
 
 }
