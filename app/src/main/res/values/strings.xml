@@ -11,12 +11,14 @@
     <string name="delete_button">Delete Local Drivers and Routes</string>
     <string name="reload_button">Force remote fetch of Drivers and Routes</string>
     <string name="clear_error_button">Clear Error</string>
-    <string name="is_sorted_label">Select FAB to toggle sort:</string>
-    <string name="is_sorted">List isSorted flag = %1s</string>
-    <string name="nav_instructions">Select any driver</string>
+    <string name="fab_label">Select FAB to toggle sort:</string>
+    <string name="sorted_indicator">List isSorted flag = %1s</string>
+    <string name="select_driver">Select any driver</string>
     <string name="no_drivers">No Drivers Available</string>
 
     <string name="test_driver_title">Test Architecture \n Driver Screen</string>
     <string name="test_route_title">Test Architecture \n Route Screen</string>
+    <string name="sort_button">Sort</string>
+    <string name="build_resource_label">Build Type String Resource =</string>
 
 </resources>

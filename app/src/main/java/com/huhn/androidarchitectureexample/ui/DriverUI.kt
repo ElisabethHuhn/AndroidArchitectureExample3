@@ -89,7 +89,7 @@ fun DriverScreen(
         floatingActionButton = {
             FloatingActionButton(
                 modifier = Modifier.testTag(tag = "sort_button"),
-                content = { Text(text = "Sort") },
+                content = { Text(text = stringResource(R.string.sort_button)) },
                 onClick = {
                     onUserEvent(DriverUserEvent.ToggleIsSorted)
                     onUserEvent(DriverUserEvent.GetDrivers)
@@ -136,7 +136,10 @@ fun DriverScreen(
             }
             item {
                 Spacer(modifier = Modifier.height(5.0.dp))
-                Text(text = "Build Type String Resource =")
+                Text(
+                    modifier = Modifier.testTag(tag = "build_resource_label"),
+                    text = stringResource(R.string.build_resource_label)
+                )
                 Text(
                     modifier = Modifier.testTag(tag = "build_config_string_resource"),
                     text = stringResource(id = R.string.build_type_res)
@@ -147,7 +150,7 @@ fun DriverScreen(
                 Spacer(modifier = Modifier.height(15.0.dp))
                 Text(
                     modifier = Modifier.testTag(tag = "select_driver"),
-                    text = stringResource(R.string.nav_instructions),
+                    text = stringResource(R.string.select_driver),
                     fontSize = 20.sp,
                     fontStyle = FontStyle.Italic,
                     fontWeight = FontWeight.Bold
@@ -201,7 +204,7 @@ fun DriverScreen(
             item {
                 Spacer(modifier = Modifier.height(15.0.dp))
                 Text(
-                    text = stringResource(R.string.is_sorted, driverState.isSorted.toString()),
+                    text = stringResource(R.string.sorted_indicator, driverState.isSorted.toString()),
                     fontSize = 20.sp,
                     modifier = Modifier.testTag(tag = "sorted_indicator"),
                     fontWeight = FontWeight.Bold
@@ -236,7 +239,7 @@ fun DriverScreen(
 
             item {
                 Button(
-                    modifier = Modifier.testTag(tag = "fetch_button"),
+                    modifier = Modifier.testTag(tag = "reload_button"),
                     onClick = {
                         //Delete All Drivers and Routes
                         onUserEvent(DriverUserEvent.DeleteDriversRoutes)
@@ -254,7 +257,7 @@ fun DriverScreen(
             item {
                 Spacer(modifier = Modifier.height(15.0.dp))
                 Text(
-                    text = stringResource(id = R.string.is_sorted_label),
+                    text = stringResource(id = R.string.fab_label),
                     fontSize = 20.sp,
                     modifier = Modifier.testTag(tag = "fab_label"),
                     fontWeight = FontWeight.Bold

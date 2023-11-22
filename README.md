@@ -39,12 +39,13 @@ Create a local persistent data source of the remote data that can serve as a cac
 
 Two Screens: Driver and Route
 
-Driver Screen:
+*Driver Screen:*
+* Demonstrates access to BuildConfig
 * Displays list of driver names and ids
 * FAB sort button. Sort based on last name
 * When a particular driver is selected, Route Screen is displayed for that driver
 
-Route Screen
+*Route Screen*
 * List of routes for a given driver depends on business rules. 
   * As yet, the routes are just listed in order of routeID. Some suggested business rules might be depending on driverID:
     * is same as routeID => display the route
@@ -68,6 +69,15 @@ Route Screen
 * Coroutines / flows
 * LiveData
   * Actually, Id like to make the argument that flows should replace LiveData
+
+*Coding Guidelines*
+* Each UI element should have a testTag assigned to it
+* The name of the test tag should match the name of any string resource assigned to the UI element
+* Each UI Route / Screen should:
+  * have a smoke test script
+  * be in a separate file
+  * be in the Nav Graph
+
 
 # Architecture and its Effects on Testing
 I initially wrote this app with an MVVM architecture, 
@@ -187,6 +197,8 @@ Assure Route Screen Behaves Properly:
   * Test UI
 * Go through the TODOs and decide whether to address them or not.
 * Assure coroutine cancellation behaves properly
+* Assure that the app behaves properly when the network is down
+
 
 # Structured Concurrency Hierarchy
 ![DataSourceExceptions.jpg](DataSourceExceptions.jpg)
