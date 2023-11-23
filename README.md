@@ -2,11 +2,11 @@
 
 # Punch List of things to do and bugs to fix
 * Continue filling out automatic testing
-  * Test UI Display and Behavior for both Driver and Route Screens
-  * Assure that the app behaves properly when the network is down
+  * Test UI Display and Behavior for Route Screen
 * Go through the TODOs and decide whether to address them or not.
 * Assure coroutine cancellation behaves properly
-*
+* Figure out a way around Compose nodes being duplicated after if statements.
+* Figure out how to test screen navigation in automated testing
 
 
 # Introduction
@@ -94,6 +94,10 @@ as that was the direct requirement. But as I learned more about MVI I rewrote th
 And the experience has taught me that MVI is clearly superior. 
 One file, ScreenContract.kt, tells you everything you need to know to unit test the corresponding Screen.
 Testing the UI, ViewModel, Repository and local/remote data sources is straightforward, and obvious from the Architecture.
+
+Unfortunately, Compose does odd things with the UI component tree if there are if statements in the LazyColumn. 
+For example, all items following the if statement are duplicated.
+For now, I've just punted and put all the if statements at the end of the column.
 
 # Automated Testing
 Writing and maintaining automated testing is clearly costly.

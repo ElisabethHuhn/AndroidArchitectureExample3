@@ -108,26 +108,8 @@ fun DriverScreen(
             item {
                 Spacer(modifier = Modifier.height(95.0.dp))
             }
-            if (driverState.errors.isNotEmpty()) {
-                item {
-                    Text(
-                        text = driverState.errors,
-                        fontSize = 20.sp,
-                        modifier = Modifier.testTag(tag = "driver_errors"),
-                        fontStyle = FontStyle.Italic,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Button(
-                        modifier = Modifier.testTag(tag = "clear_error_button"),
-                        onClick = {
-                            onUserEvent(DriverUserEvent.ClearError)
-                            onUserEvent(DriverUserEvent.DeleteDriversRoutes)
-                        })
-                    {
-                        Text(text = stringResource(id = R.string.clear_error_button))
-                    }
-                }
-            }
+            /// errors is not empty
+
             item {
                 Spacer(modifier = Modifier.height(5.0.dp))
                 Text(
@@ -169,36 +151,7 @@ fun DriverScreen(
                     )
                 }
             }
-            driverState.drivers?.let {driverList ->
-                items(driverList.size) { position ->
-                    val driver = driverState.drivers[position]
-
-                    Row(
-                        modifier = Modifier.testTag(tag = "driver_row"),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .testTag(tag = "driver_id_select")
-                                .clickable {
-                                    onUserEvent(DriverUserEvent.SelectDriver(driver))
-                                    onNavigateToRoute.invoke()
-                                },
-                            text = driver.id
-                        )
-                        Text(
-                            modifier = Modifier
-                                .testTag(tag = "driver_name_select")
-                                .clickable {
-                                    onUserEvent(DriverUserEvent.SelectDriver(driver = driver))
-                                    onNavigateToRoute.invoke()
-                                },
-                            text = driver.name
-                        )
-                    }
-                }
-            }
+            /////drivers
             item {
                 Spacer(modifier = Modifier.height(15.0.dp))
                 Text(
@@ -259,6 +212,58 @@ fun DriverScreen(
                     fontWeight = FontWeight.Bold
                 )
             }
+
+            if (driverState.errors.isNotEmpty()) {
+                item {
+                    Text(
+                        text = driverState.errors,
+                        fontSize = 20.sp,
+                        modifier = Modifier.testTag(tag = "driver_errors"),
+                        fontStyle = FontStyle.Italic,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Button(
+                        modifier = Modifier.testTag(tag = "clear_error_button"),
+                        onClick = {
+                            onUserEvent(DriverUserEvent.ClearError)
+                            onUserEvent(DriverUserEvent.DeleteDriversRoutes)
+                        })
+                    {
+                        Text(text = stringResource(id = R.string.clear_error_button))
+                    }
+                }
+            }
+            driverState.drivers?.let {driverList ->
+                items(driverList.size) { position ->
+                    val driver = driverState.drivers[position]
+
+                    Row(
+                        modifier = Modifier.testTag(tag = "driver_row"),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .testTag(tag = "driver_id_select")
+                                .clickable {
+                                    onUserEvent(DriverUserEvent.SelectDriver(driver))
+                                    onNavigateToRoute.invoke()
+                                },
+                            text = driver.id
+                        )
+                        Text(
+                            modifier = Modifier
+                                .testTag(tag = "driver_name_select")
+                                .clickable {
+                                    onUserEvent(DriverUserEvent.SelectDriver(driver = driver))
+                                    onNavigateToRoute.invoke()
+                                },
+                            text = driver.name
+                        )
+                    }
+                }
+            }
+
 
         }
     }

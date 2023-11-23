@@ -3,6 +3,7 @@ package com.huhn.androidarchitectureexample.ui
 import android.content.Context
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -16,15 +17,18 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.huhn.androidarchitectureexample.BuildConfig
 import com.huhn.androidarchitectureexample.R
 import com.huhn.androidarchitectureexample.TestDriverRepositoryImpl
+import com.huhn.androidarchitectureexample.viewmodel.DriverUserEvent
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class TestComposeUI {
+class TestDriverComposeUI {
 
     private lateinit var appContext : Context
+
+    private val testDriverViewModel: TestDriverViewModel = TestDriverViewModel(TestDriverRepositoryImpl())
 
     @get:Rule
     val composeTestRule = createComposeRule()
@@ -41,7 +45,7 @@ class TestComposeUI {
                 onNavigateToRoute = {
                     /* Somehow indicate navigation */
                 },
-                driveViewModel = TestDriverViewModel(TestDriverRepositoryImpl()),
+                driveViewModel = testDriverViewModel,
             )
         }
         composeTestRule.waitForIdle()
@@ -156,7 +160,7 @@ class TestComposeUI {
     }
 
     @Test
-    fun testDriveScreenBehaviorDelete() {
+    fun testDriveScreenBehaviorDeleteAndReload() {
         composeTestRule.onRoot().printToLog("TAG")
 
         composeTestRule.onNodeWithTag("sorted_indicator")
@@ -180,37 +184,50 @@ class TestComposeUI {
         composeTestRule.onRoot().printToLog("TAG")
 
         //once there,always there
-//        composeTestRule.onAllNodesWithTag("driver_row").assertAll(isNotEnabled())
+//        composeTestRule.onAllNodesWithTag("driver_id_select").assertAll(isNotEnabled())
+//        composeTestRule.onAllNodesWithTag("driver_name_select").assertAll(isNotEnabled())
 
-//        val sorted_indicator = appContext.resources.getString(R.string.sorted_indicator, "false")
-//        composeTestRule.onNodeWithTag("sorted_indicator")
-//            .assertIsDisplayed()
-//            .assertTextEquals(sorted_indicator)
+        val sorted_indicator = appContext.resources.getString(R.string.sorted_indicator, "false")
+        composeTestRule.onNodeWithTag("sorted_indicator")
+            .assertIsDisplayed()
+            .assertTextEquals(sorted_indicator)
+
+        val reload_button = appContext.resources.getString(R.string.reload_button)
+        composeTestRule.onNodeWithTag("reload_button")
+            .assertIsDisplayed()
+            .assertTextEquals(reload_button)
+            .performClick()
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onAllNodesWithTag("driver_row").assertCountEquals(6)
     }
 
 
     @Test
-    fun testDriveScreenBehaviorReload() {
-//        composeTestRule.onRoot().printToLog("TAG")
-//
-//        composeTestRule.onAllNodesWithTag("driver_row").assertCountEquals(6)
-//
-//        val delete_button = appContext.resources.getString(R.string.delete_button)
-//        composeTestRule.onNodeWithTag("delete_button")
-//            .assertIsDisplayed()
-//            .assertTextEquals(delete_button)
-//            .performClick()
-//
-//        composeTestRule.waitForIdle()
-//
-//        val reload_button = appContext.resources.getString(R.string.reload_button)
-//        composeTestRule.onNodeWithTag("reload_button")
-//            .assertIsDisplayed()
-//            .assertTextEquals(reload_button)
-//            .performClick()
-//
-//        composeTestRule.waitForIdle()
-//        composeTestRule.onAllNodesWithTag("driver_row").assertCountEquals(6)
+    fun testDriveScreenBehaviorError() {
+        composeTestRule.onRoot().printToLog("TAG")
 
+        //force an error
+        testDriverViewModel.onDriverUserEvent(DriverUserEvent.SetError("Some Error Text"))
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithTag("driver_errors")
+            .assertExists()
+            .assertIsDisplayed()
+            .assertTextContains("Some Error Text")
+
+        val clear_error_button = appContext.resources.getString(R.string.clear_error_button)
+        composeTestRule.onNodeWithTag("clear_error_button")
+            .assertIsDisplayed()
+            .assertTextEquals(clear_error_button)
+            .performClick()
+
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onRoot().printToLog("TAG")
+
+        composeTestRule.onNodeWithTag("driver_errors")
+            .assertExists()
+            .assertIsNotDisplayed()
     }
 }
