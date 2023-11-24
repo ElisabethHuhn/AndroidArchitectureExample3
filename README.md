@@ -62,6 +62,7 @@ Two Screens: Driver and Route
 
 *Technical Requirements*
 * MVVM architecture
+  * This has been augmented to MVI. The MVI is an enhancement of the MVVM architecture.
 * Repository that separates
   * data source from data usage
   * local data source from remote data source
@@ -92,6 +93,7 @@ And the experience has taught me that MVI is clearly superior.
 One file, ScreenContract.kt, tells you everything you need to know to unit test the corresponding Screen.
 Testing the UI, ViewModel, Repository and local/remote data sources is straightforward, and obvious from the Architecture.
 
+# Justification for odd screen layout
 Unfortunately, Compose does odd things with the UI component tree if there are if statements in the LazyColumn. 
 For example, all items following the if statement are duplicated.
 For now, I've just punted and put all the if statements at the end of the column.
@@ -104,8 +106,9 @@ The earlier you find a bug, the cheaper it is to fix.
 Thus, a bug found by a developer is cheaper than that same bug found in QA.
 Automated testing finds bugs earlier in the process,
 and this savings more than covers the cost of creating and maintaining automated testing.
-However even more than that, an architecture that is designed to be testable is also an architecture that is easier to maintain. 
-With a good architecture you can avoid a whole class of bugs entirely.
+However even more than that, an architecture that is designed to be testable is also less likely to have bugs in the first place.  
+With a good architecture you can avoid a whole class of bugs entirely. 
+A testable architecture is easier to maintain, thus justifying the cost of creating and maintaining automated testing.
 
 MVI allows for a greater separation of concerns over MVVM, and thus an easier isolation of code, leading to higher quality testing.
 MVI allows for the tracking of user event occurrence resulting in UI state change.
@@ -139,15 +142,14 @@ So the Repository can be tested by initializing the local DB (both empty and wit
 then fetching the lists of Drivers and Routes, and making assertions about the final state.
 
 ## UI Testing Strategy
-Once the ViewModel and Repository are tested, the UI testing can be simply to automate the smoke test of the App. 
+Once the ViewModel and Repository are tested, the UI testing can be to simply automate the smoke test of the App. 
 Compose gives us the ability to test that the UI is properly displaying the expected state. 
 The easiest way to test that an element is on the UI is to assign testTags to the UI elements, 
 then find those testTags in the UI test. Thus, all of the compose elements have testTags assigned to them.
 
-However, it is never easy. Compose seems to duplicate nodes seemingly at random. 
-Well, not at random, but I haven't figured out the pattern yet. 
-It seems to be related to the use of if statements in the LazyColumn to determine whether to display a particular element.
-So relying on the testTag to find the element in the UI test is not a bullet-proof strategy.
+However, it is never easy. Compose seems to duplicate nodes when there is an if statement governing the items of a LazyColumn. 
+So relying on the testTag to find the element in the UI test is not a bullet-proof strategy. 
+I got around this by putting all the if statements at the end of the LazyColumn, but it makes for a stilted UI.
 
 **Smoke Test Script:** 
 
@@ -209,6 +211,9 @@ Assure Route Screen Behaves Properly:
 
 # Structured Concurrency Hierarchy
 ![DataSourceExceptions.jpg](DataSourceExceptions.jpg)
+
+This diagram illustrates the hierarchy of structured concurrency jobs. 
+I used it to guide my thinking about how to handle exceptions and cancellations.
 
 # Near Exhaustive list of Testing Types
 This app only illustrates a few of the many types of testing that can be performed on an app.
