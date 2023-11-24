@@ -74,7 +74,7 @@ Two Screens: Driver and Route
 * ROOM local
 * Coroutines / flows
 * LiveData
-  * Actually, Id like to make the argument that flows should replace LiveData
+  * Actually, while I did use LiveData in the MVVM branch of this project, in the MVI branch I used flows
 
 *Coding Guidelines*
 * Each UI element should have a testTag assigned to it
