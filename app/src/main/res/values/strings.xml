@@ -3,10 +3,10 @@
     <string name="driver_title">State of the Art Architecture \n Driver Screen</string>
     <string name="route_title">State of the Art Architecture \n Route Screen</string>
     <string name="driver_list">List of Drivers:</string>
-    <string name="route_list">List of Routes:</string>
+    <string name="route_list_label">List of Routes:</string>
 
     <string name="route_picked">You Selected:</string>
-    <string name="route_button">Return to Driver Screen</string>
+    <string name="route_navigate_button">Return to Driver Screen</string>
     <string name="print_button">Print out list of drivers</string>
     <string name="delete_button">Delete Local Drivers and Routes</string>
     <string name="reload_button">Force remote fetch of Drivers and Routes</string>

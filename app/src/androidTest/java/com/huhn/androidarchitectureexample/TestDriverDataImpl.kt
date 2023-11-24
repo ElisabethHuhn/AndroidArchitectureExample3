@@ -36,7 +36,8 @@ class TestDriverDataImpl {
             )
         }
 
-        fun defaultDriver() = Driver(id = "1", name = "John Doe")
+        val defaultDriverName = "John Doe"
+        fun defaultDriver() = Driver(id = "1", name = defaultDriverName)
         fun defaultRoute() = Route(id = 1, name = "South Side", type = "R")
     }
 }

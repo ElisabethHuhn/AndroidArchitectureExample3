@@ -1,12 +1,9 @@
 # AndroidArchitectureExample3
 
 # Punch List of things to do and bugs to fix
-* Continue filling out automatic testing
-  * Test UI Display and Behavior for Route Screen
 * Go through the TODOs and decide whether to address them or not.
 * Assure coroutine cancellation behaves properly
 * Figure out a way around Compose nodes being duplicated after if statements.
-* Figure out how to test screen navigation in automated testing
 
 
 # Introduction

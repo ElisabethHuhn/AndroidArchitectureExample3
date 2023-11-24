@@ -128,10 +128,9 @@ fun RouteScreen(
             item {
                 Spacer(modifier = Modifier.height(5.0.dp))
                 UnderlinedText(
-                    modifier = Modifier.testTag(tag = "list_label"),
-                    textString = stringResource(R.string.route_list)
+                    modifier = Modifier.testTag(tag = "route_list_label"),
+                    textString = stringResource(R.string.route_list_label)
                 )
-
                 Spacer(modifier = Modifier.height(15.0.dp))
             }
             driverState.routes?.let {routes ->
@@ -167,7 +166,7 @@ fun RouteScreen(
                         onBack.invoke()
                     })
                 {
-                    Text(text = stringResource(id = R.string.route_button))
+                    Text(text = stringResource(id = R.string.route_navigate_button))
                 }
             }
         }

@@ -9,6 +9,7 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.printToLog
@@ -44,6 +45,7 @@ class TestDriverComposeUI {
                 screenTitle = R.string.test_driver_title,
                 onNavigateToRoute = {
                     /* Somehow indicate navigation */
+                    testDriverViewModel.onDriverUserEvent(DriverUserEvent.SetError("Navigated to Route Screen"))
                 },
                 driveViewModel = testDriverViewModel,
             )
@@ -146,6 +148,18 @@ class TestDriverComposeUI {
             .assertIsDisplayed()
             .assertTextEquals(sorted_indicator)
     }
+    @Test
+    fun testDriveScreenBehaviorSelectDriver() {
+        composeTestRule.onNodeWithText("John Doe")
+            .assertIsDisplayed()
+            .performClick()
+
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithTag("driver_errors")
+            .assertIsDisplayed()
+            .assertTextEquals("Navigated to Route Screen")
+    }
 
     @Test
     fun testDriveScreenBehaviorPrint() {
@@ -157,6 +171,13 @@ class TestDriverComposeUI {
             .assertIsDisplayed()
             .assertTextEquals(print_button)
             .performClick()
+
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithTag("driver_errors")
+            .assertExists()
+            .assertIsDisplayed()
+            .assertTextContains("Printed Driver List")
     }
 
     @Test
@@ -201,7 +222,6 @@ class TestDriverComposeUI {
         composeTestRule.waitForIdle()
         composeTestRule.onAllNodesWithTag("driver_row").assertCountEquals(6)
     }
-
 
     @Test
     fun testDriveScreenBehaviorError() {
