@@ -28,14 +28,6 @@ class DriverRepositoryTest {
 
     @Before
     fun setup() {
-        //TODO figure out why this doesn't work
-//        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-//        db = Room.databaseBuilder(context = appContext,
-//                                  klass = AppDatabase::class.java, "aae-database"
-//                                ).build()
-//        dbDriverDao = db.dbDriverDao()
-//        dbRouteDao = db.dbRouteDao()
-
         driverApiService = Retrofit.Builder()
                             .baseUrl(BASE_URL)
                             .addConverterFactory(GsonConverterFactory.create())
