@@ -3,7 +3,6 @@ package com.huhn.androidarchitectureexample.ui
 import android.content.Context
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -225,10 +224,10 @@ class TestDriverComposeUI {
 
     @Test
     fun testDriveScreenBehaviorError() {
-        composeTestRule.onRoot().printToLog("TAG")
 
         //force an error
         testDriverViewModel.onDriverUserEvent(DriverUserEvent.SetError("Some Error Text"))
+        composeTestRule.onRoot().printToLog("TAG")
         composeTestRule.waitForIdle()
 
         composeTestRule.onNodeWithTag("driver_errors")
@@ -247,7 +246,6 @@ class TestDriverComposeUI {
         composeTestRule.onRoot().printToLog("TAG")
 
         composeTestRule.onNodeWithTag("driver_errors")
-            .assertExists()
-            .assertIsNotDisplayed()
+            .assertDoesNotExist()
     }
 }

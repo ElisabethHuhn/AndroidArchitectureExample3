@@ -112,6 +112,13 @@ A testable architecture is easier to maintain, thus justifying the cost of creat
 MVI allows for a greater separation of concerns over MVVM, and thus an easier isolation of code, leading to higher quality testing.
 MVI allows for the tracking of user event occurrence resulting in UI state change.
 
+## To run automated tests:
+I ran the automated tests from Android Studio:
+
+* ViewModel, run the tests in DriverViewModelTest
+* Repository, run the tests in DriverRepositoryTest
+* Smoke test the UI, run the tests in TestDriverComposeUI and TestRouteComposeUI
+
 ## ViewModel Testing Strategy
 The only things publicly visible from the ViewModel are:
 * Screen State
@@ -150,7 +157,8 @@ However, it is never easy. Compose seems to duplicate nodes when there is an if 
 So relying on the testTag to find the element in the UI test is not a bullet-proof strategy. 
 I got around this by putting all the if statements at the end of the LazyColumn, but it makes for a stilted UI.
 
-**Smoke Test Script:** 
+
+### Smoke Test Script:
 
 A smoke test is a quick test to assure that the app is working properly.
 

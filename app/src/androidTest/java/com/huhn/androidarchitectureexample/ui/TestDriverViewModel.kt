@@ -27,4 +27,9 @@ class TestDriverViewModel(
         onDriverListChanged(listOf())
         onRouteListChanged(listOf())
     }
+
+    override fun printDrivers() {
+        super.printDrivers()
+        super.onErrorChanged("Printed Driver List")
+    }
 }

@@ -66,7 +66,7 @@ open class DriverViewModel(
     }
 
 
-    private fun onErrorChanged(error: String){
+    protected fun onErrorChanged(error: String){
         _driverState.update {
             it.copy(errors = error)
         }
@@ -115,7 +115,7 @@ open class DriverViewModel(
         onRouteListChanged(listOf())
     }
 
-    private fun printDrivers() {
+    protected open fun printDrivers() {
         val driverList: List<Driver> = _driverState.value.drivers ?: listOf()
         println("List of Drivers:")
         driverList.forEach { driver ->

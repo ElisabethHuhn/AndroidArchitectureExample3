@@ -129,39 +129,6 @@ fun DriverScreen(
                 )
             }
             item {
-                Spacer(modifier = Modifier.height(15.0.dp))
-                Text(
-                    modifier = Modifier.testTag(tag = "select_driver_label"),
-                    text = stringResource(R.string.select_driver),
-                    fontSize = 20.sp,
-                    fontStyle = FontStyle.Italic,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(15.0.dp))
-            }
-            item {
-                if (driverState.drivers.isNullOrEmpty()) {
-                        Text(
-                        text = stringResource(R.string.no_drivers),
-                        fontSize = 20.sp,
-                        modifier = Modifier.testTag(tag = "no_drivers"),
-                        fontStyle = FontStyle.Italic,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Red
-                    )
-                }
-            }
-            /////drivers
-            item {
-                Spacer(modifier = Modifier.height(15.0.dp))
-                Text(
-                    text = stringResource(R.string.sorted_indicator, driverState.isSorted.toString()),
-                    fontSize = 20.sp,
-                    modifier = Modifier.testTag(tag = "sorted_indicator"),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            item {
                 Button(
                     modifier = Modifier.testTag(tag = "print_button"),
                     onClick = {
@@ -203,18 +170,51 @@ fun DriverScreen(
                     Text(text = stringResource(id = R.string.reload_button))
                 }
             }
+
             item {
                 Spacer(modifier = Modifier.height(15.0.dp))
                 Text(
-                    text = stringResource(id = R.string.fab_label),
+                    text = stringResource(R.string.sorted_indicator, driverState.isSorted.toString()),
                     fontSize = 20.sp,
-                    modifier = Modifier.testTag(tag = "fab_label"),
+                    modifier = Modifier.testTag(tag = "sorted_indicator"),
                     fontWeight = FontWeight.Bold
                 )
             }
+            item {
+                //Spacer(modifier = Modifier.height(5.0.dp))
+                Text(
+                    text = stringResource(id = R.string.fab_label),
+                    fontSize = 15.sp,
+                    modifier = Modifier.testTag(tag = "fab_label"),
+                    fontWeight = FontWeight.Normal
+                )
+            }
+            item {
+                Spacer(modifier = Modifier.height(15.0.dp))
+                Text(
+                    modifier = Modifier.testTag(tag = "select_driver_label"),
+                    text = stringResource(R.string.select_driver),
+                    fontSize = 20.sp,
+                    fontStyle = FontStyle.Italic,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(15.0.dp))
 
-            if (driverState.errors.isNotEmpty()) {
-                item {
+            }
+            item {
+                if (driverState.drivers.isNullOrEmpty()) {
+                    Text(
+                        text = stringResource(R.string.no_drivers),
+                        fontSize = 20.sp,
+                        modifier = Modifier.testTag(tag = "no_drivers"),
+                        fontStyle = FontStyle.Italic,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Red
+                    )
+                }
+            }
+            item {
+                if (driverState.errors.isNotEmpty()) {
                     Text(
                         text = driverState.errors,
                         fontSize = 20.sp,
