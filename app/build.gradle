@@ -28,11 +28,15 @@ plugins {
  */
 android {
     /*
-     * The app's namespace. Used primarily to access app resources.
+     * The app's namespace. Used as the package name for generated R and BuildConfig classes
      */
     namespace 'com.huhn.androidarchitectureexample'
-    compileSdk 34   //determines which Android and Java APIs are available when compiling the source code.
-                    //  can use the API features included in this API level and lower.
+    /*
+     * compileSdk
+     * determines which Android and Java APIs are available when compiling the source code.
+     * can use the API features included in this API level and lower.
+     */
+    compileSdk 34
 
     /*
      * The defaultConfig block encapsulates default settings and entries for all build variants
@@ -41,12 +45,35 @@ android {
      * You can override these values by configuring product flavors for different versions of your app.
      */
     defaultConfig {
-        applicationId "com.huhn.androidarchitectureexample"  // Uniquely identifies the package for publishing.
+        /*
+         * applicationId uniquely identifies the package for publishing.
+         * the build tools copy the application ID into your app's final manifest file
+         * at the end of the build.
+         * standards:
+         *  o must have at least two segments (one or more dots).
+         *  o Each segment must start with a letter.
+         *  o All characters must be alphanumeric or an underscore [a-zA-Z0-9_].
+         * guidelines:
+         *  o Keep the application ID the same as the namespace
+         *  o Don't change the application ID after you publish your app.
+         *       - If you change it, Google Play Store treats the subsequent upload as a new app.
+         *  o Explicitly define the application ID.
+         *      - Otherwise it defaults to the namespace which can cause problems down the line
+         *  o By default, the build tools apply an application ID to your instrumentation test APK
+         *    using the application ID for the given build variant appended with .test.
+         *      - this can be overridden with testApplicationId in defaultConfig or productFlavor block
+         */
+        applicationId "com.huhn.androidarchitectureexample"
+        // testApplicationId "com.huhn.androidarchitectureexample.test"
+
         minSdk 24    //specifies the lowest version of Android that the app will run on
-        targetSdk 34 //attests which version of Android you've tested against
-                    // must be <= the value of compileSdk
-                    // if runtime is on a higher API version,
-                    //  app runs in compatibility mode that matches the targetSdk
+        /*
+         * targetSdk attests which version of Android you've tested against
+         * must be <= the value of compileSdk.
+         * if runtime is on a higher API version, the app app runs in compatibility mode
+         * that matches the targetSdk
+         */
+        targetSdk 34
 
         versionCode 1
         versionName "1.0"
@@ -160,8 +187,18 @@ android {
 }
 
 /*
- * The dependencies block in the module-level build configuration file
- * specifies dependencies required to build only the module itself.
+ * specifies dependencies (external binaries or other library modules)
+ * required to build only the module itself.
+ *
+ * dependencies can be local or remote
+ * remote online repositories are specified in the settings.gradle file in the
+ * dependencyResolutionManagement { repositories {...} } block
+ * The order in which you list each repository determines the order in which Gradle searches the repositories
+ *
+ * any transitive dependencies they declare are automatically included as well.
+ *  use the exclude keyword to exclude transitive dependencies
+ * The Android plugin for Gradle provides a task that displays
+ * a list of the dependencies Gradle resolves for a given module.
  */
 dependencies {
 
