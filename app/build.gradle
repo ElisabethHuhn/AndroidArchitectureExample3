@@ -1,3 +1,7 @@
+/*
+ * The first section in the build configuration applies the Android Gradle plugin to this build
+ * and makes the android block available to specify Android-specific build options.
+ */
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
@@ -5,14 +9,45 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
-android {
-    namespace 'com.huhn.androidarchitectureexample'
-    compileSdk 34
+/*
+ * Locate (and possibly download) a JDK used to build your kotlin source code.
+ * This also acts as a default for sourceCompatibility, targetCompatibility and jvmTarget.
+ *
+ * Note that this does not affect which JDK is used to run the Gradle build itself,
+ * and does not need to take into account the JDK version required by Gradle plugins
+ * (such as the Android Gradle Plugin)
+ *
+ * See compileOptions and kotlinOptions below, as both are related
+ */
+//kotlin {
+//    jvmToolchain(17)
+//}
 
+/*
+ * The android block is where you configure all your Android-specific build options.
+ */
+android {
+    /*
+     * The app's namespace. Used primarily to access app resources.
+     */
+    namespace 'com.huhn.androidarchitectureexample'
+    compileSdk 34   //determines which Android and Java APIs are available when compiling the source code.
+                    //  can use the API features included in this API level and lower.
+
+    /*
+     * The defaultConfig block encapsulates default settings and entries for all build variants
+     * and can override some attributes in main/AndroidManifest.xml dynamically from the build system.
+     *
+     * You can override these values by configuring product flavors for different versions of your app.
+     */
     defaultConfig {
-        applicationId "com.huhn.androidarchitectureexample"
-        minSdk 24
-        targetSdk 34
+        applicationId "com.huhn.androidarchitectureexample"  // Uniquely identifies the package for publishing.
+        minSdk 24    //specifies the lowest version of Android that the app will run on
+        targetSdk 34 //attests which version of Android you've tested against
+                    // must be <= the value of compileSdk
+                    // if runtime is on a higher API version,
+                    //  app runs in compatibility mode that matches the targetSdk
+
         versionCode 1
         versionName "1.0"
 
@@ -22,7 +57,20 @@ android {
         }
     }
 
+    /*
+     * The buildTypes block is where you can configure multiple build types.
+     * By default, the build system defines two build types: debug and release.
+     *
+     * The debug build type is not explicitly shown in the default build configuration,
+     * but it includes debugging tools and is signed with the debug key.
+     *
+     * The release build type applies ProGuard settings and is not signed by default.
+     */
     buildTypes {
+        /*
+         * By default, Android Studio configures the release build type to enable code
+         * shrinking, using minifyEnabled, and specifies the default ProGuard rules file.
+         */
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -46,6 +94,42 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+    /*
+     * Product flavors are optional, and the build system does not create them by default.
+     *
+     * The productFlavors block is declares and configures multiple product flavors,
+     * Each flavor overrides the defaultConfig block with their own settings.
+     *
+     * This example creates a free and paid product flavor.
+     * Each product flavor then specifies its own application ID,
+     * so that they can simultaneously exist on the Google Play Store, or an Android device.
+     *
+     * If you declare product flavors, you must also declare flavor dimensions
+     * and assign each flavor to a flavor dimension.
+     */
+//    flavorDimensions += "tier"
+//    productFlavors {
+//        create("free") {
+//            dimension = "tier"
+//            applicationId = "com.example.myapp.free"
+//        }
+//
+//        create("paid") {
+//            dimension = "tier"
+//            applicationId = "com.example.myapp.paid"
+//        }
+//    }
+
+
+
+    /*
+     * use options to override source and target compatibility
+     * (if different from the toolchain JDK version),
+     * All of these default to the same value as kotlin.jvmToolchain.
+     *
+     * If you're using the same version for these values and kotlin.jvmToolchain,
+     *  you can remove these blocks.
+     */
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
@@ -53,6 +137,10 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
+
+    /*
+     * need more on these
+     */
     buildFeatures {
         compose true
         buildConfig true
@@ -71,6 +159,10 @@ android {
     }
 }
 
+/*
+ * The dependencies block in the module-level build configuration file
+ * specifies dependencies required to build only the module itself.
+ */
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.12.0'
@@ -131,7 +223,7 @@ dependencies {
     // Lifecycle components
     implementation "androidx.compose.runtime:runtime-livedata:1.6.0-beta01"
 
-    //Picasso
+    //Picasso - investigate Coin
 //    implementation 'com.squareup.picasso:picasso:2.71828'
 //    implementation 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
 
