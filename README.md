@@ -258,6 +258,7 @@ Proverbs
 * If it looks like it's not there, it might as well not be. Delete it
   * if don't want to delete it, make it so everyone can see it.
 * Only what you need when you need it
+* Search engines are blind as well. SEO depends on link text
 
 
 Guidelines
