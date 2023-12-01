@@ -60,6 +60,13 @@ Two Screens: Driver and Route
     * does not meet any of the above rules => display the last I type route
   * Whether I actually implement any of these business rules is TBD
 
+*Accessibility Requirements*
+Accessibility is a feature that must be designed in, it can not be tacked on at the end. 
+This app focuses on providing an architectural example, and thus is pretty light on UI. 
+As such, no accessibility was baked in. 
+However, I've created a new branch to play around with accessibility. 
+If at some later point it becomes feasible, I'll merge that branch into the main one. 
+For now, assume accessibility has not been addressed.
 
 *Technical Requirements*
 * MVVM architecture
@@ -245,46 +252,3 @@ This app only illustrates a few of the many types of testing that can be perform
 * Installation Testing
 * Security Testing
 * Bucket or A/B testing
-
-# Accessibility Notes
-
-Proverbs
-* Accessibility is essential for some, but useful for all. Usability is improved when accessibility is improved
-* If you want something to be seen, make it have enough contrast so everyone can see it
-* A good user experience means the user doesn't wonder about what is going on
-* Use something other than color alone to convey information (be a banana)
-* Color Independent - color should not be the only visual maens of conveying information
-* Accessible design doesn not need to be ugly design
-* If it looks like it's not there, it might as well not be. Delete it
-  * if don't want to delete it, make it so everyone can see it.
-
-Guidelines
-* Heavier things look like they are coming out at us
-* Underlining makes somehting look clickable
-* Shapes trigger strong visual associations for us
-
-Definitions
-* tint color mixed with white
-* shade color mixed with Black
-* luminance - intensity of light / brightness
-* hue pigment
-
-Requirements
-* Color Contrast
-  * Information bearing vs. Decorative & disabled elements
-  * Essential text color contrast ratio:
-    * Use online tool to check contrast eg WebAIM
-    * 4.5:1 against the background for small text
-    * eased to 3:1 against the background for:
-      * large text (14pt bold & 18 pt regular and up)
-      * UI controls (e.g. a check in a checkbox)
-      * Graphical objects required to understand content
-    * button containers: 3:1 contrast between container and background* touch targets must be at least 48 by 48dp, even if hte underlying visual elements are smaller
-* pointer targets must be at least 44 by 44dp, even if hte underlying visual elements are smaller
-* targets must be separated by 8dp
-* focus order must follow visual layout order from top to bottom
-* Traversal must be from most important to least important
-* All text must be accessible to screen readers
-* All visual elements must have alternative descriptive text. Include text that is embedded in the image in the alt text
-
-* Text must be resizable up to a minimum increase of 200%
