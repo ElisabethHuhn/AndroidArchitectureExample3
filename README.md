@@ -257,17 +257,36 @@ Proverbs
 * Accessible design doesn not need to be ugly design
 * If it looks like it's not there, it might as well not be. Delete it
   * if don't want to delete it, make it so everyone can see it.
+* Only what you need when you need it
+
 
 Guidelines
 * Heavier things look like they are coming out at us
 * Underlining makes somehting look clickable
 * Shapes trigger strong visual associations for us
+* hover doesn't work on touch devices, so also use on tap
+* SVG scales better than jpeg or png on mobile devices
+* Explain why the chart is here. What are you trying to tell us.
+* Put the data table under the chart. But it doesn't have to be visible by default
+* Use interactivity to help users interpret data in charts
+
+* wording
+  * wording conveys purpose
+* style
+* interactivity
+
+Color tactics
+* non color styling (line style, patterns, shape)
+* Relative luminance
+* Non-Color styling on hover and keyboard focus
+* Color for color-codding
 
 Definitions
 * tint color mixed with white
 * shade color mixed with Black
 * luminance - intensity of light / brightness
 * hue pigment
+* Signifiers signals that communicates an element's intended use
 
 Requirements
 * Color Contrast
