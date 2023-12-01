@@ -7,9 +7,9 @@
 
     <string name="route_picked">You Selected:</string>
     <string name="route_navigate_button">Return to Driver Screen</string>
-    <string name="print_button">Print out list of drivers</string>
-    <string name="delete_button">Delete Local Drivers and Routes</string>
-    <string name="reload_button">Force remote fetch of Drivers and Routes</string>
+    <string name="print_button">Print</string>
+    <string name="delete_button">Delete</string>
+    <string name="reload_button">Fetch</string>
     <string name="clear_error_button">Clear Error</string>
     <string name="fab_label">Select FAB to toggle sort:</string>
     <string name="sorted_indicator">List isSorted flag = %1s</string>
