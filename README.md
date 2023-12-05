@@ -259,6 +259,9 @@ Proverbs
   * if don't want to delete it, make it so everyone can see it.
 * Only what you need when you need it
 * Search engines are blind as well. SEO depends on link text
+* A link is a promise
+* WIIFT - what's in it for them
+* A UI is like a joke, if you have to explain it, it is  not that good
 
 
 Guidelines
@@ -270,6 +273,7 @@ Guidelines
 * Explain why the chart is here. What are you trying to tell us.
 * Put the data table under the chart. But it doesn't have to be visible by default
 * Use interactivity to help users interpret data in charts
+* Use a button for actions andd a link for navigation
 
 * wording
   * wording conveys purpose

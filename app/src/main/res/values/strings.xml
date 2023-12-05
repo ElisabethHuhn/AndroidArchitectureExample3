@@ -2,23 +2,25 @@
     <string name="app_name">AndroidArchitectureExample</string>
     <string name="driver_title">State of the Art Architecture \n Driver Screen</string>
     <string name="route_title">State of the Art Architecture \n Route Screen</string>
-    <string name="driver_list">List of Drivers:</string>
-    <string name="route_list_label">List of Routes:</string>
-
-    <string name="route_picked">You Selected:</string>
-    <string name="route_navigate_button">Return to Driver Screen</string>
-    <string name="print_button">Print</string>
-    <string name="delete_button">Delete</string>
-    <string name="reload_button">Fetch</string>
-    <string name="clear_error_button">Clear Error</string>
-    <string name="fab_label">Select FAB to toggle sort:</string>
-    <string name="sorted_indicator">List isSorted flag = %1s</string>
-    <string name="select_driver">Select any driver</string>
-    <string name="no_drivers">No Drivers Available</string>
 
     <string name="test_driver_title">Test Architecture \n Driver Screen</string>
     <string name="test_route_title">Test Architecture \n Route Screen</string>
-    <string name="sort_button">Sort</string>
     <string name="build_resource_label">Build Type String Resource =</string>
+
+    <string name="driver_list">List of Drivers:</string>
+    <string name="route_list_label">List of Routes:</string>
+    <string name="fab_label">Select FAB to toggle sort:</string>
+    <string name="sorted_indicator">List isSorted flag = %1s</string>
+    <string name="select_driver">Select any driver</string>
+    <string name="route_picked">You Selected:</string>
+
+    <string name="no_drivers">No Drivers Available</string>
+
+    <string name="sort_button">Sort</string>
+    <string name="clear_error_button">Clear Error</string>
+    <string name="print_button">Print</string>
+    <string name="delete_button">Delete</string>
+    <string name="reload_button">Fetch</string>
+    <string name="route_navigate_button">Return to Driver Screen</string>
 
 </resources>
