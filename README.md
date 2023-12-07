@@ -63,8 +63,8 @@ Two Screens: Driver and Route
 
 *Technical Requirements*
 * MVVM architecture
-  * This has been augmented to MVI. The MVI is an enhancement of the MVVM architecture.
-* Repository that separates
+  * This has been augmented to MVI. The MVI is an enhancement of the MVVM architecture that adds user event triggeers.
+* Repository that separates:
   * data source from data usage
   * local data source from remote data source
 * Koin DI
@@ -262,6 +262,9 @@ Proverbs
 * A link is a promise
 * WIIFT - what's in it for them
 * A UI is like a joke, if you have to explain it, it is  not that good
+* If everything looks important, then nothing looks important
+* When in doubt, test it out.
+* Testing with anyone is better than noone
 
 
 Guidelines
@@ -273,7 +276,10 @@ Guidelines
 * Explain why the chart is here. What are you trying to tell us.
 * Put the data table under the chart. But it doesn't have to be visible by default
 * Use interactivity to help users interpret data in charts
-* Use a button for actions andd a link for navigation
+* Use a button for actions and a link for navigation
+* Aim for having only one primary call to acton on each page
+* Add in more white space than you would normally be inclined to do
+* Put related things closer to each other
 
 * wording
   * wording conveys purpose
