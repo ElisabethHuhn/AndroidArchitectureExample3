@@ -193,7 +193,7 @@ fun DriverScreen(
                 Spacer(modifier = Modifier.height(15.0.dp))
                 Text(
                     modifier = Modifier.testTag(tag = "select_driver_label"),
-                    text = stringResource(R.string.select_driver),
+                    text = stringResource(R.string.select_dates),
                     fontSize = 20.sp,
                     fontStyle = FontStyle.Italic,
                     fontWeight = FontWeight.Bold
@@ -204,7 +204,7 @@ fun DriverScreen(
             item {
                 if (driverState.drivers.isNullOrEmpty()) {
                     Text(
-                        text = stringResource(R.string.no_drivers),
+                        text = stringResource(R.string.no_dates),
                         fontSize = 20.sp,
                         modifier = Modifier.testTag(tag = "no_drivers"),
                         fontStyle = FontStyle.Italic,

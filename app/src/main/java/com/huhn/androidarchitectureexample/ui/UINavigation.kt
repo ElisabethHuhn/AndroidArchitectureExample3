@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.huhn.androidarchitectureexample.R
+import com.huhn.androidarchitectureexample.viewmodel.DatesViewModel
 import com.huhn.androidarchitectureexample.viewmodel.DriverViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -22,13 +23,13 @@ interface ScreenDestination {
     val route: String
     val title: Int
 }
-object DriverDestination : ScreenDestination {
+object DatesDestination : ScreenDestination {
     override val route: String
-        get() = "driver_screen"
+        get() = "dates_screen"
     override val title: Int
-        get() = R.string.driver_title
+        get() = R.string.dates_title
 }
-object RouteDestination : ScreenDestination {
+object EnhancedDateDestination : ScreenDestination {
     override val route: String
         get() = "route_screen"
     override val title: Int
@@ -41,39 +42,39 @@ object RouteDestination : ScreenDestination {
 @ExperimentalMaterial3Api
 @Composable
 fun MainNavGraph(
-    driverViewModel: DriverViewModel = koinViewModel(),
+    datesViewModel: DatesViewModel = koinViewModel(),
     navController: NavHostController = rememberNavController()
 ){
     NavHost(
         navController = navController,
-        startDestination =  DriverDestination.route
+        startDestination =  DatesDestination.route
     ){
-        composable(DriverDestination.route){
+        composable(DatesDestination.route){
             //pass navigation as parameter
-            DriverRoute(
-                screenTitle = DriverDestination.title,
-                onNavigateToRoute = navController::navigateToRouteRoute,
-                driveViewModel = driverViewModel,
+            DatesRoute(
+                screenTitle = DatesDestination.title,
+                onNavigateToEnhancedDates = navController::navigateToEnhancedDateEnhancedDate,
+                datesViewModel = datesViewModel,
             )
         }
 
-        composable(
-            route = RouteDestination.route,
-        ){ backStackEntry ->
-            //pass navigation as parameter
-            RouteRoute(
-                screenTitle = RouteDestination.title,
-                onBack = navController::navigateToDriverRoute, //TODO try with backStackEntry
-                driveViewModel = driverViewModel,
-            )
-        }
+//        composable(
+//            route = EnhancedDateDestination.route,
+//        ){ backStackEntry ->
+//            //pass navigation as parameter
+//            EnhancedDateRoute(
+//                screenTitle = EnhancedDateDestination.title,
+//                onBack = navController::navigateToDatesEnhancedDate, //TODO try with backStackEntry
+//                driveViewModel = datesViewModel,
+//            )
+//        }
     }
 }
 
-fun NavController.navigateToDriverRoute(navOptions: NavOptions? = null){
-    this.navigate(route = DriverDestination.route, navOptions = navOptions)
+fun NavController.navigateToDatesEnhancedDate(navOptions: NavOptions? = null){
+    this.navigate(route = DatesDestination.route, navOptions = navOptions)
 }
-fun NavController.navigateToRouteRoute(navOptions: NavOptions? = null){
-    this.navigate(route = RouteDestination.route, navOptions = navOptions)
+fun NavController.navigateToEnhancedDateEnhancedDate(navOptions: NavOptions? = null){
+    this.navigate(route = EnhancedDateDestination.route, navOptions = navOptions)
 }
 

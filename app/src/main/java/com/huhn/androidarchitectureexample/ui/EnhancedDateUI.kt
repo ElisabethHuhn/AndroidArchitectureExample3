@@ -25,32 +25,34 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.huhn.androidarchitectureexample.R
+import com.huhn.androidarchitectureexample.viewmodel.DatesState
+import com.huhn.androidarchitectureexample.viewmodel.DatesUserEvent
+import com.huhn.androidarchitectureexample.viewmodel.DatesViewModel
 import com.huhn.androidarchitectureexample.viewmodel.DriverState
 import com.huhn.androidarchitectureexample.viewmodel.DriverUserEvent
-import com.huhn.androidarchitectureexample.viewmodel.DriverViewModel
 
 
 @Composable
-fun RouteRoute(
+fun EnhancedDateRoute(
     screenTitle: Int,
     onBack: () -> Unit,
-    driveViewModel: DriverViewModel,
+    datesViewModel: DatesViewModel,
 ){
-    val driverState by driveViewModel.driverState.collectAsStateWithLifecycle()
+    val datesState by datesViewModel.datesState.collectAsStateWithLifecycle()
 
-    RouteScreen(
+    EnhancedDateScreen(
         screenTitle = screenTitle,
-        driverState = driverState,
-        onUserEvent = driveViewModel::onDriverUserEvent,
+        datesState = datesState,
+        onUserEvent = datesViewModel::onDatesUserEvent,
         onBack = onBack,
     )
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RouteScreen(
+fun EnhancedDateScreen(
     screenTitle: Int,
-    driverState: DriverState,
-    onUserEvent: (DriverUserEvent) -> Unit,
+    datesState: DatesState,
+    onUserEvent: (DatesUserEvent) -> Unit,
     onBack: () -> Unit,
 ) {
     Scaffold(
@@ -81,9 +83,9 @@ fun RouteScreen(
         ) {
             item {
                 Spacer(modifier = Modifier.height(95.0.dp))
-                if (driverState.errors.isNotEmpty()) {
+                if (datesState.errors.isNotEmpty()) {
                     Text(
-                        text = driverState.errors,
+                        text = datesState.errors,
                         fontSize = 20.sp,
                         modifier = Modifier.testTag(tag = "route_errors"),
                         fontStyle = FontStyle.Italic,
@@ -92,7 +94,7 @@ fun RouteScreen(
                     Button(
                         modifier = Modifier.testTag(tag = "clear_error_button"),
                         onClick = {
-                            onUserEvent(DriverUserEvent.ClearError)
+                            onUserEvent(DatesUserEvent.ClearError)
                         })
                     {
                         Text(text = stringResource(id = R.string.clear_error_button))
@@ -102,7 +104,7 @@ fun RouteScreen(
             item {
                 Spacer(modifier = Modifier.height(5.0.dp))
                 Text(
-                    modifier = Modifier.testTag(tag = "selected_driver"),
+                    modifier = Modifier.testTag(tag = "selected_dates"),
                     text = stringResource(R.string.route_picked),
                     fontSize = 20.sp,
                 )
@@ -111,18 +113,15 @@ fun RouteScreen(
 
                 Spacer(modifier = Modifier.height(5.0.dp))
                 Row (
-                    modifier = Modifier.testTag(tag = "driver_row"),
+                    modifier = Modifier.testTag(tag = "dates_row"),
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        modifier = Modifier.testTag(tag = "driver_id_select"),
-                        text = driverState.selectedDriver?.id ?: ""
+                        modifier = Modifier.testTag(tag = "dates_id_select"),
+                        text = datesState.selectedDate?.date ?: ""
                     )
-                    Text(
-                        modifier = Modifier.testTag(tag = "driver_name_select"),
-                        text = driverState.selectedDriver?.name ?: ""
-                    )
+
                 }
             }
             item {
@@ -133,9 +132,9 @@ fun RouteScreen(
                 )
                 Spacer(modifier = Modifier.height(15.0.dp))
             }
-            driverState.routes?.let {routes ->
-                val numberOfRoutes= routes.size
-                items(numberOfRoutes) { position ->
+            datesState.enhancedDates?.let { routes ->
+                val numberOfEnhancedDates= routes.size
+                items(numberOfEnhancedDates) { position ->
                     val route = routes[position]
                     Row (
                         modifier = Modifier.testTag(tag = "route_row"),
@@ -144,16 +143,9 @@ fun RouteScreen(
                     ) {
                         Text(
                             modifier = Modifier.testTag(tag = "route_id"),
-                            text = route.id.toString()
+                            text = route.date.toString()
                         )
-                        Text(
-                            modifier = Modifier.testTag(tag = "route_name"),
-                            text = " - ${route.name}"
-                        )
-                        Text(
-                            modifier = Modifier.testTag(tag = "route_type"),
-                            text = " - ${route.type}"
-                        )
+
                     }
                 }
             }
@@ -162,7 +154,7 @@ fun RouteScreen(
                 Button(
                     modifier = Modifier.testTag(tag = "navigate_button"),
                     onClick = {
-                        //navigate to Driver Screen
+                        //navigate to Dates Screen
                         onBack.invoke()
                     })
                 {
